@@ -7,9 +7,6 @@ import colors from 'windicss/colors';
  */
 export default defineConfig({
   darkMode: 'class',
-  attributify: {
-    prefix: 'w:'
-  },
   theme: {
     extend: {
       screens: {
