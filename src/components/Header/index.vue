@@ -13,7 +13,7 @@ const toggleDark = useToggle(isDark);
   <div class="inline-flex">
     <Sun v-if="!isDark" class="icon icon-red" @click="toggleDark()" />
     <Moon v-else class="icon icon-red" @click="toggleDark()" />
-    <a href="https://github.com/RyanProMax/vue-vite-starter" target="__blank">
+    <a href="https://github.com/RyanProMax/" target="__blank">
       <Github class="icon icon-red" w:m="l-4" />
     </a>
   </div>

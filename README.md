@@ -3,7 +3,7 @@
 </h1>
 
 <p align='center'>
-  <img src="https://raw.githubusercontent.com/RyanProMax/vue-vite-starter/main/public/favicon.ico" width="100" alt="Vue-Vite-Starter" />
+  <img src="https://raw.githubusercontent.com/RyanProMax/blog/main/public/favicon.ico" width="100" alt="Ryan's blog" />
 </p>
 
 # TODO
