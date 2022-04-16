@@ -29,6 +29,8 @@ export default defineConfig({
     'btn-red': 'text-white bg-red-500 hover:bg-red-700',
     'input': 'py-2 px-4 text-center border-1 rounded border-gray-500 outline-none font-thin bg-transparent hover:(border-red-500) focus:(border-red-500) transition duration-250',
     'icon': 'w-6 h-6 transition duration-250 cursor-pointer',
-    'icon-red': 'fill-gray-500 hover:fill-red-500 dark:fill-gray-300 dark:fill-hover:red-500'
+    'icon-red': 'fill-gray-500 hover:fill-red-500 dark:fill-gray-300 dark:hover:fill-red-500',
+    'text-hover': 'transition duration-250 cursor-pointer border border-transparent',
+    'text-hover-red': 'hover:border-b-red-500'
   }
 });
