@@ -43,7 +43,7 @@ const navList = computed(() => ([
     <div class="flex flex-row items-center text-gray-400">
       <template v-for="item in navList" :key="item.name">
         <router-link v-if="!item.external && !item.clickEvent" :to="item.path" :title="item.name" class="inline-flex not-last:mr-4" active-class="text-red-500 svg:fill-red-500 dark:svg:fill-red-500">
-          <span class="hidden md:inline-block">{{ item.name }}</span>
+          <span class="hidden md:inline-block text-hover text-hover-red">{{ item.name }}</span>
           <component :is="item.icon" class="icon icon-red md:hidden" />
         </router-link>
         <a v-else-if="item.clickEvent" :title="item.name" class="inline-flex not-last:mr-4" @click="item.clickEvent()">

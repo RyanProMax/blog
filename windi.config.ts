@@ -31,6 +31,6 @@ export default defineConfig({
     'icon': 'w-6 h-6 transition duration-250 cursor-pointer',
     'icon-red': 'fill-gray-500 hover:fill-red-500 dark:fill-gray-300 dark:hover:fill-red-500',
     'text-hover': 'transition duration-250 cursor-pointer border border-transparent',
-    'text-hover-red': 'hover:border-b-red-500'
+    'text-hover-red': 'hover:(border-b-red-500 text-red-500)'
   }
 });
