@@ -27,7 +27,7 @@
     <p class="mt-8">
       Finally, leave my favorite sentence.
     </p>
-    <p class="mt-2 italic">
+    <p class="mt-2 italic text-green-500">
       Stay hungry, stay foolish.
     </p>
     <footer class="w-full mt-20 text-gray-400 text-sm">

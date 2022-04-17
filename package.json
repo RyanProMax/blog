@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "@vueuse/core": "^8.2.5",
+    "lodash-es": "^4.17.21",
     "vue": "^3.2.25",
     "vue-router": "^4.0.14"
   },
   "devDependencies": {
     "@ryanpromax/eslint-config": "^2.0.0",
+    "@types/lodash-es": "^4.17.6",
     "@types/node": "^17.0.23",
     "@vitejs/plugin-vue": "^2.3.0",
     "eslint": "^8.12.0",
