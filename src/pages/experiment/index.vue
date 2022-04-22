@@ -7,7 +7,7 @@ const router = useRouter();
 const files = import.meta.globEager('../../experiments/*.vue');
 const list = Object.keys(files).map((path) => {
   const fileName = path.split('\/').pop()!.replace('.vue', '');
-  const fileNameArr = fileName.split('.');
+  const fileNameArr = fileName.split('-');
   return {
     index: fileNameArr[0],
     label: fileNameArr.slice(1).map(capitalize).join(' '),

@@ -37,7 +37,7 @@ const navList = computed(() => ([
 
 <template>
   <div class="w-full p-8 flex flex-row justify-between items-center">
-    <router-link to="/" class="inline-flex" active-class="svg:fill-red-500 dark:svg:fill-red-500">
+    <router-link to="/" class="inline-flex" active-class="svg:fill-red-500">
       <Joker class="icon icon-red" />
     </router-link>
     <div class="flex flex-row items-center text-gray-400">
