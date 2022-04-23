@@ -6,6 +6,8 @@ import router from '~/router';
 import './styles/index.css';
 import 'virtual:windi.css';
 
+// element-plus
+
 const app = createApp(Layout);
 
 // router
