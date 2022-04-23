@@ -1,13 +1,21 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
+import type { UploadFile } from 'element-plus/es';
 
 const imageUrl = ref('');
+
+const handleChange = (file: UploadFile) => {
+  imageUrl.value = window.URL.createObjectURL(file.raw!);
+};
 </script>
 
 <template>
   <div>
-    <el-upload class="w-64 avatar-uploader" action="#" :show-file-list="false">
+    <el-upload
+      class="w-64 avatar-uploader" action="#" :show-file-list="false" :auto-upload="false" accept="image/*"
+      :on-change="handleChange"
+    >
       <img v-if="imageUrl" :src="imageUrl" class="avatar">
       <el-icon v-else class="avatar-uploader-icon">
         <Plus />
@@ -18,7 +26,7 @@ const imageUrl = ref('');
 
 <style>
 .avatar-uploader .el-upload {
-  @apply border border-dashed border-gray-500 rounded cursor-pointer relative overflow-hidden transition duration-500;
+  @apply border border-dashed border-gray-500 rounded cursor-pointer relative overflow-hidden transition duration-250;
 }
 
 .avatar-uploader:hover .el-upload {

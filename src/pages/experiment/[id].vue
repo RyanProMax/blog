@@ -4,6 +4,7 @@ import { useRoute, useRouter } from 'vue-router';
 import type { Experiment } from '~/types';
 import ExperimentTitle from '~/components/ExperimentTitle.vue';
 import { Starport } from 'vue-starport';
+import Description from '~/components/Description.vue';
 
 const { list } = defineProps<{
   list: Experiment[]
@@ -36,20 +37,27 @@ const label = computed(() => {
 </script>
 
 <template>
-  <div class="flex flex-col items-center">
-    <div class="flex relative items-center">
-      <Starport v-if="label.prev" :port="label.prev.index" class="min-w-200px h-6 absolute -left-30">
-        <ExperimentTitle v-bind="label.prev" onlyIndex
-          class=" text-gray-300 hover:text-gray-500 justify-center" />
-      </Starport>
-      <Starport :port="label.curr.index" class="min-w-200px h-6">
-        <ExperimentTitle v-bind="label.curr" class="text-red-500 justify-center" />
-      </Starport>
-      <Starport v-if="label.next"  :port="label.next.index" class="min-w-200px h-6 absolute -right-30 ">
-        <ExperimentTitle v-bind="label.next" onlyIndex
-          class="text-gray-300 hover:text-gray-500 justify-center" />
+  <div class="w-full max-w-720px flex flex-col items-center">
+    <div v-if="label.prev" class="w-full flex">
+      <Starport :port="label.prev.index" class="w-full min-w-200px h-6">
+        <ExperimentTitle v-bind="label.prev" class=" text-gray-300 hover:text-gray-500 <sm:justify-center" />
       </Starport>
     </div>
+    <div class="w-full">
+      <Starport :port="label.curr.index" class="w-full min-w-200px h-12 <sm:h-8">
+        <ExperimentTitle v-bind="label.curr" class="text-red-500 text-3xl leading-12 <sm:(justify-center text-2xl leading-8)" />
+      </Starport>
+    </div>
+    <div v-if="label.next" class="w-full flex">
+      <Starport :port="label.next.index" class="w-full min-w-200px h-6">
+        <ExperimentTitle v-bind="label.next" class="text-gray-300 hover:text-gray-500 <sm:justify-center" />
+      </Starport>
+    </div>
+
+    <!-- description -->
+    <Description />
+
+    <!-- component -->
     <component :is="experimentComponent" :key="id" v-bind="{ list }" class="mt-8" />
   </div>
 </template>
