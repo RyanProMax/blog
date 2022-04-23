@@ -3,6 +3,7 @@ import { computed, defineAsyncComponent } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import type { Experiment } from '~/types';
 import ExperimentTitle from '~/components/ExperimentTitle.vue';
+import { Starport } from 'vue-starport';
 
 const { list } = defineProps<{
   list: Experiment[]
@@ -37,11 +38,17 @@ const label = computed(() => {
 <template>
   <div class="flex flex-col items-center">
     <div class="flex relative items-center">
-      <ExperimentTitle v-if="label.prev" v-bind="label.prev" onlyIndex
-        class="absolute -left-20 text-gray-300 hover:text-gray-500" />
-      <ExperimentTitle v-bind="label.curr" class="text-red-500" />
-      <ExperimentTitle v-if="label.next" v-bind="label.next" onlyIndex
-        class="absolute -right-20 text-gray-300 hover:text-gray-500" />
+      <Starport v-if="label.prev" :port="label.prev.index" class="min-w-200px h-6 absolute -left-30">
+        <ExperimentTitle v-bind="label.prev" onlyIndex
+          class=" text-gray-300 hover:text-gray-500 justify-center" />
+      </Starport>
+      <Starport :port="label.curr.index" class="min-w-200px h-6">
+        <ExperimentTitle v-bind="label.curr" class="text-red-500 justify-center" />
+      </Starport>
+      <Starport v-if="label.next"  :port="label.next.index" class="min-w-200px h-6 absolute -right-30 ">
+        <ExperimentTitle v-bind="label.next" onlyIndex
+          class="text-gray-300 hover:text-gray-500 justify-center" />
+      </Starport>
     </div>
     <component :is="experimentComponent" :key="id" v-bind="{ list }" class="mt-8" />
   </div>

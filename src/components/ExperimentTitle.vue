@@ -16,10 +16,10 @@ const handleJump = (fileName: string) => {
 
 <template>
   <p
-    class="flex cursor-pointer text-gray-400 hover:text-red-500 transition duration-250"
+    class="flex cursor-pointer text-gray-400 hover:text-red-500 transition duration-800"
     @click="handleJump(fileName)"
   >
     <span class="font-mono">{{ index }}</span>
-    <span v-if="!onlyIndex" class="ml-2 text-oh-ellipsis">{{ label }}</span>
+    <span v-show="!onlyIndex" class="ml-2 text-oh-ellipsis">{{ label }}</span>
   </p>
 </template>

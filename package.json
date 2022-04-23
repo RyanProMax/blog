@@ -15,8 +15,9 @@
     "@vueuse/core": "^8.2.5",
     "element-plus": "^2.1.10",
     "lodash-es": "^4.17.21",
-    "vue": "^3.2.25",
-    "vue-router": "^4.0.14"
+    "vue": "^3.2.32",
+    "vue-router": "^4.0.14",
+    "vue-starport": "^0.2.8"
   },
   "devDependencies": {
     "@ryanpromax/eslint-config": "^2.0.0",
