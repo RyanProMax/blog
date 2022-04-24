@@ -1,12 +1,9 @@
 <script setup lang="ts">
-import Joker from '~icon/joker.svg';
+import NotSupport from '~/components/NotSupport.vue';
 </script>
 
 <template>
-  <div class="flex flex-col items-center">
-    <Joker class="mt-20 w-36 h-36 cursor-auto fill-red-900" />
-    <p class="mt-10 text-xl text-red-900">
-      Oh no, 404 warning!
-    </p>
+  <div class="mt-20 flex justify-center items-center">
+    <NotSupport content="404 warning!" />
   </div>
 </template>

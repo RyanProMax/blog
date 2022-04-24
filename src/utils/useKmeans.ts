@@ -1,4 +1,6 @@
-import kmeans from 'ml-kmeans';
+import KmeansWorker from '~/worker/kmeans?worker';
+
+let worker: Worker | null = null;
 
 export const getImageSize = (img: string) => {
   return new Promise<{
@@ -26,19 +28,28 @@ const getVectors = (imageData: Uint8ClampedArray) => {
   return ret;
 };
 
-export const useKmeans = async(imageUrl: string) => {
+export const useKmeans = async(imageUrl: string, cb: (arg0: any) => void) => {
   const { width, height, imageElement } = await getImageSize(imageUrl);
   const canvas = document.createElement('canvas');
   [canvas.width, canvas.height] = [width, height];
   const ctx = canvas.getContext('2d')!;
   ctx.drawImage(imageElement, 0, 0);
   const vectors = getVectors(ctx.getImageData(0, 0, width, height).data);
+  if (!worker)
+    worker = new KmeansWorker();
 
-  return {
-    kmeansResult: kmeans(vectors, 4),
-    width,
-    height,
-    vectors
+  worker.postMessage({
+    type: 'kmeans',
+    data: vectors
+  });
+
+  worker.onmessage = (e) => {
+    cb({
+      kmeansResult: e.data,
+      width,
+      height,
+      vectors
+    });
   };
 };
 
@@ -59,4 +70,42 @@ export const vectorsToBase64 = (vectors: number[][], width: number, height: numb
   }
   ctx.putImageData(imageData, 0, 0);
   return canvas.toDataURL();
+};
+
+export const updatePixel = ({ vectors, targetIndex, width, height, r, g, b, a }: {
+  vectors: number[][]
+  targetIndex: number[]
+  width: number
+  height: number
+  r: number
+  g: number
+  b: number
+  a: number
+}, cb: (url: string) => void) => {
+  if (!worker)
+    worker = new KmeansWorker();
+
+  worker.postMessage({
+    type: 'updatePixel',
+    data: {
+      vectors: JSON.stringify(vectors),
+      targetIndex: JSON.stringify(targetIndex),
+      r,
+      g,
+      b,
+      a
+    }
+  });
+
+  worker.onmessage = (e) => {
+    const url = vectorsToBase64(e.data, width, height);
+    cb(url);
+  };
+};
+
+export const terminateWorker = () => {
+  if (worker) {
+    worker.terminate();
+    worker = null;
+  }
 };

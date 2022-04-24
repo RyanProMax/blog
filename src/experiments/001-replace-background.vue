@@ -1,15 +1,19 @@
 <script setup lang="ts">
-import { nextTick, ref, watch } from 'vue';
+import { onBeforeUnmount, ref, watch } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadFile } from 'element-plus/es';
+import NotSupport from '../components/NotSupport.vue';
 import Description from '~/components/Description.vue';
-import { useKmeans, vectorsToBase64 } from '~/utils/useKmeans';
+import { terminateWorker, updatePixel, useKmeans } from '~/utils/useKmeans';
+
+// assets
 import photo from '~/assets/images/01.png';
 
 const imageUrl = ref(photo);
 const previewUrl = ref('');
 const bgColor = ref<string | null>(null);
 const loading = ref(false);
+const supportWorker = window.Worker;
 const store = ref<{
   width: number
   height: number
@@ -23,47 +27,50 @@ const handleChange = (file: UploadFile) => {
   previewUrl.value = '';
 };
 
-watch(imageUrl, async(url) => {
+watch(imageUrl, (url) => {
+  if (!supportWorker)
+    return;
+
   loading.value = true;
-  const result = await useKmeans(url);
-  const targetCentroidIndex = result.kmeansResult.clusters[0];
-  const target = result.kmeansResult.centroids[targetCentroidIndex];
-  const [r, g, b, a] = target.centroid;
-  bgColor.value = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
-  const targetIndex = ((result.kmeansResult.clusters as number[]).map((x, idx) => x === targetCentroidIndex ? idx : null).filter(x => x !== null));
-  store.value = { ...result, targetIndex: (targetIndex as number[]) };
-  loading.value = false;
+  useKmeans(url, (result: any) => {
+    const targetCentroidIndex = result.kmeansResult.clusters[0];
+    const target = result.kmeansResult.centroids[targetCentroidIndex];
+    const [r, g, b, a] = target.centroid;
+    bgColor.value = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
+    const targetIndex = ((result.kmeansResult.clusters as number[]).map((x, idx) => x === targetCentroidIndex ? idx : null).filter(x => x !== null));
+    store.value = { ...result, targetIndex: (targetIndex as number[]) };
+    loading.value = false;
+  });
 }, { immediate: true });
 
 watch(bgColor, (color) => {
-  nextTick(() => {
-    loading.value = true;
-    const { targetIndex, vectors, width, height } = store.value!;
-    if (color) {
-      const [r, g, b, a] = (color.match(/(\d(\.\d+)?)+/g) as string[]).map(Number);
-      targetIndex.forEach((idx) => {
-        vectors[idx] = [~~r, ~~g, ~~b, ~~(a * 255)];
-      });
-    }
-    else {
-      // 透明背景
-      targetIndex.forEach((idx) => {
-        vectors[idx] = [0, 0, 0, 0];
-      });
-    }
-    previewUrl.value = vectorsToBase64(vectors, width, height);
-    loading.value = false;
-  });
+  loading.value = true;
+  if (color) {
+    const [r, g, b, a] = (color.match(/(\d(\.\d+)?)+/g) as string[]).map(Number);
+    updatePixel({ ...store.value!, r, g, b, a }, (url) => {
+      previewUrl.value = url;
+      loading.value = false;
+    });
+  }
+  else {
+    // 透明背景
+    updatePixel({ ...store.value!, r: 0, g: 0, b: 0, a: 0 }, (url) => {
+      previewUrl.value = url;
+      loading.value = false;
+    });
+  }
 });
+
+onBeforeUnmount(() => terminateWorker());
 </script>
 
 <template>
-  <div v-loading="loading" class="w-full">
+  <div v-if="supportWorker" class="w-full">
     <!-- description -->
     <Description class="mb-10" :content="['证件照换底色🎨']" :tips="['基于 k-means 算法', '纯在线转换，无需上传至后台，请放心使用']" />
 
     <!-- main -->
-    <div class="w-full flex flex-col items-center">
+    <div v-loading="loading" class="w-full flex flex-col items-center">
       <el-upload
         class="w-64 mb-8 avatar-uploader" action="#" :show-file-list="false" :auto-upload="false"
         accept="image/*" :on-change="handleChange"
@@ -76,6 +83,7 @@ watch(bgColor, (color) => {
       <el-color-picker v-if="imageUrl" v-model="bgColor" :show-alpha="true" color-format="rgb" />
     </div>
   </div>
+  <NotSupport v-else content="Your browser does not support Web Workers." />
 </template>
 
 <style>

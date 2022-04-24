@@ -16,9 +16,9 @@ const id = computed(() => {
 
 const router = useRouter();
 const experimentComponent = computed(() => {
-  console.log('id', id.value)
+  const componentPath = `../../experiments/${id.value}.vue`;
   return defineAsyncComponent({
-    loader: () => import(`../../experiments/${id.value}.vue`),
+    loader: () => import(/* @vite-ignore */componentPath),
     onError: () => router.replace('/404')
   })
 });
@@ -42,7 +42,7 @@ const label = computed(() => {
         <ExperimentTitle v-bind="label.prev" class=" text-gray-300 hover:text-gray-500 <sm:justify-center" />
       </Starport>
     </div>
-    <div class="w-full">
+    <div v-if="label.curr" class="w-full">
       <Starport :port="label.curr.index" class="w-full min-w-200px h-12 <sm:h-8">
         <ExperimentTitle v-bind="label.curr"
           class="text-red-500 text-3xl leading-12 <sm:(justify-center text-2xl leading-8)" />
