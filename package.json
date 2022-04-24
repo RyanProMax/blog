@@ -13,6 +13,7 @@
   "dependencies": {
     "@element-plus/icons-vue": "^1.1.4",
     "@vueuse/core": "^8.2.5",
+    "compressorjs": "^1.1.1",
     "element-plus": "^2.1.10",
     "lodash-es": "^4.17.21",
     "ml-kmeans": "^5.0.0",

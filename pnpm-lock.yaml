@@ -7,6 +7,7 @@ specifiers:
   '@types/node': ^17.0.23
   '@vitejs/plugin-vue': ^2.3.0
   '@vueuse/core': ^8.2.5
+  compressorjs: ^1.1.1
   element-plus: ^2.1.10
   eslint: ^8.12.0
   lodash-es: ^4.17.21
@@ -27,6 +28,7 @@ specifiers:
 dependencies:
   '@element-plus/icons-vue': 1.1.4_vue@3.2.33
   '@vueuse/core': 8.2.5_vue@3.2.33
+  compressorjs: 1.1.1
   element-plus: 2.1.10_vue@3.2.33
   lodash-es: 4.17.21
   ml-kmeans: 5.0.0
@@ -814,6 +816,10 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /blueimp-canvas-to-blob/3.29.0:
+    resolution: {integrity: sha512-0pcSSGxC0QxT+yVkivxIqW0Y4VlO2XSDPofBAqoJ1qJxgH9eiUDLv50Rixij2cDuEfx4M6DpD9UGZpRhT5Q8qg==}
+    dev: false
+
   /boolbase/1.0.0:
     resolution: {integrity: sha1-aN/1++YMUes3cl6p4+0xDcwed24=}
     dev: true
@@ -970,6 +976,13 @@ packages:
   /color-name/1.1.4:
     resolution: {integrity: sha512-dOy+3AuW3a2wNbZHIuMZpTcgjGuLU/uBL/ubcZF9OXbDo8ff4O8yVp5Bf0efS8uEoYo5q4Fx7dY9OgQGXgAsQA==}
     dev: true
+
+  /compressorjs/1.1.1:
+    resolution: {integrity: sha512-SysRuUPfmUNoq+RviE0iMFVUmoX2q/x+7PkEPUmk6NGkd85hDrmvujx0Qtp8UCGA6KMe5kuodsylPQcNaLf60w==}
+    dependencies:
+      blueimp-canvas-to-blob: 3.29.0
+      is-blob: 2.1.0
+    dev: false
 
   /concat-map/0.0.1:
     resolution: {integrity: sha1-2Klr13/Wjfd5OnMDajug1UBdR3s=}
@@ -2113,6 +2126,11 @@ packages:
     dependencies:
       binary-extensions: 2.2.0
     dev: true
+
+  /is-blob/2.1.0:
+    resolution: {integrity: sha512-SZ/fTft5eUhQM6oF/ZaASFDEdbFVe89Imltn9uZr03wdKMcWNVYSMjQPFtg05QuNkt5l5c135ElvXEQG0rk4tw==}
+    engines: {node: '>=6'}
+    dev: false
 
   /is-boolean-object/1.1.2:
     resolution: {integrity: sha512-gDYaKHJmnj4aWxyj6YHyXVpdQawtVLHU5cb+eztPGczf6cjuTdwve5ZIEfgXqH4e57An1D1AKf8CZ3kYrQRqYA==}

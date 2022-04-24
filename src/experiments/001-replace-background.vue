@@ -2,6 +2,7 @@
 import { onBeforeUnmount, ref, watch } from 'vue';
 import { Plus } from '@element-plus/icons-vue';
 import type { UploadFile } from 'element-plus/es';
+import Compressor from 'compressorjs';
 import NotSupport from '../components/NotSupport.vue';
 import Description from '~/components/Description.vue';
 import { terminateWorker, updatePixel, useKmeans } from '~/utils/useKmeans';
@@ -23,8 +24,18 @@ const store = ref<{
 } | null>(null);
 
 const handleChange = (file: UploadFile) => {
-  imageUrl.value = window.URL.createObjectURL(file.raw!);
-  previewUrl.value = '';
+  const r = new Compressor(file.raw!, {
+    maxWidth: 720,
+    maxHeight: 720,
+    success(result) {
+      imageUrl.value = window.URL.createObjectURL(result);
+      previewUrl.value = '';
+      r.abort();
+    },
+    error(err) {
+      console.error(err.message);
+    }
+  });
 };
 
 watch(imageUrl, (url) => {
