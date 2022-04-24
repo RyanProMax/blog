@@ -54,7 +54,10 @@ const label = computed(() => {
       </Starport>
     </div>
 
+    <!-- divider -->
+    <div class="my-8 w-full h-1px bg-gray-200" />
+
     <!-- component -->
-    <component :is="experimentComponent" :key="id" v-bind="{ list }" class="mt-8" />
+    <component :is="experimentComponent" :key="id" v-bind="{ list }" />
   </div>
 </template>
