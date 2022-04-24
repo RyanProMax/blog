@@ -4,7 +4,6 @@ import { useRoute, useRouter } from 'vue-router';
 import type { Experiment } from '~/types';
 import ExperimentTitle from '~/components/ExperimentTitle.vue';
 import { Starport } from 'vue-starport';
-import Description from '~/components/Description.vue';
 
 const { list } = defineProps<{
   list: Experiment[]
@@ -45,7 +44,8 @@ const label = computed(() => {
     </div>
     <div class="w-full">
       <Starport :port="label.curr.index" class="w-full min-w-200px h-12 <sm:h-8">
-        <ExperimentTitle v-bind="label.curr" class="text-red-500 text-3xl leading-12 <sm:(justify-center text-2xl leading-8)" />
+        <ExperimentTitle v-bind="label.curr"
+          class="text-red-500 text-3xl leading-12 <sm:(justify-center text-2xl leading-8)" />
       </Starport>
     </div>
     <div v-if="label.next" class="w-full flex">
@@ -53,9 +53,6 @@ const label = computed(() => {
         <ExperimentTitle v-bind="label.next" class="text-gray-300 hover:text-gray-500 <sm:justify-center" />
       </Starport>
     </div>
-
-    <!-- description -->
-    <Description />
 
     <!-- component -->
     <component :is="experimentComponent" :key="id" v-bind="{ list }" class="mt-8" />

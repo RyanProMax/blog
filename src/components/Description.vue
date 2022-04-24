@@ -1,11 +1,19 @@
 <script setup lang="ts">
-
+const { content = [], tips = [] } = defineProps<{
+  content?: string[]
+  tips?: string[]
+}>();
 </script>
 
 <template>
-  <div class="w-full flex flex-col">
-    <p>证件照换底色</p>
-    <p>* 基于 k-means 算法</p>
-    <p>* 纯在线转换，无需上传至后台，请放心使用</p>
+  <div class="w-full flex flex-col <sm:items-center">
+    <p v-for="(item, idx) in content" :key="idx" class="not-first:mt-2">
+      {{ item }}
+    </p>
+    <div class="mt-4">
+      <p v-for="(item, idx) in tips" :key="idx" class="text-sm not-first:mt-1 text-gray-400 italic">
+        * {{ item }}
+      </p>
+    </div>
   </div>
 </template>
