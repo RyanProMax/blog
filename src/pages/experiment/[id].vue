@@ -16,9 +16,9 @@ const id = computed(() => {
 
 const router = useRouter();
 const experimentComponent = computed(() => {
-  const componentPath = `../../experiments/${id.value}.vue`;
+  console.log('id', id.value);
   return defineAsyncComponent({
-    loader: () => import(/* @vite-ignore */componentPath),
+    loader: () => import(`../../experiments/${id.value}.vue`),
     onError: () => router.replace('/404')
   })
 });
