@@ -23,5 +23,5 @@ onmessage = function(e) {
 };
 
 onerror = function(err) {
-  console.log(err);
+  console.error(err);
 };

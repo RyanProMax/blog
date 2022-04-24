@@ -10,7 +10,7 @@ const { content = [], tips = [] } = defineProps<{
     <p v-for="(item, idx) in content" :key="idx" class="not-first:mt-2">
       {{ item }}
     </p>
-    <div class="mt-4">
+    <div v-if="tips.length" class="mt-4">
       <p v-for="(item, idx) in tips" :key="idx" class="text-sm not-first:mt-1 text-gray-400 italic">
         * {{ item }}
       </p>
