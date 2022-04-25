@@ -8,7 +8,7 @@ const canvasRef = ref<HTMLCanvasElement | undefined>();
 
 onMounted(async() => {
   loading.value = true;
-  useGrowingUp({ canvas: canvasRef.value!, color: '#fda4af' });
+  useGrowingUp({ canvas: canvasRef.value! });
   loading.value = false;
 });
 

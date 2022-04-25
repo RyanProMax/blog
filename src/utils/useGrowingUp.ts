@@ -9,7 +9,9 @@ export const useGrowingUp = ({
   probability = 0.5,
   deep = 80,
   minLevel = 6,
-  color = 'red'
+  color = '#fda4af',
+  start = { x: 150, y: 300 },
+  startAngle = -Math.PI / 2
 }: {
   canvas: HTMLCanvasElement
   baseLength?: number
@@ -17,12 +19,14 @@ export const useGrowingUp = ({
   deep?: number
   minLevel?: number
   color?: string
+  start?: Point
+  startAngle?: number
 }) => {
   const ctx = canvas.getContext('2d')!;
   ctx.lineWidth = 0.5;
   ctx.strokeStyle = color;
 
-  recursiveGrow({ x: 150, y: 300 }, -Math.PI / 2, baseLength);
+  recursiveGrow(start, startAngle, baseLength);
 
   function getCoordinate(from: Point, angle: number, length: number) {
     const x = from.x + Math.cos(angle) * length;
