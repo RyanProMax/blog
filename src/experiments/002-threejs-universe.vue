@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { onBeforeMount, onMounted, ref } from 'vue';
+import { onMounted, ref } from 'vue';
+import { throttle } from 'lodash-es';
+import { useResizeObserver } from '@vueuse/core';
 import Description from '~/components/Description.vue';
 import { initialUniverse } from '~/utils/useThreeJS';
 
@@ -8,23 +10,22 @@ const loading = ref(false);
 const controller = ref();
 
 // resize
-const handleResize = () => {
-  if (container.value && controller.value) {
-    const { clientWidth, clientHeight } = container.value;
+const handleResize = throttle((entries) => {
+  if (controller.value) {
+    const entry = entries[0];
+    const { width, height } = entry.contentRect;
     const { camera, renderer } = controller.value;
-    camera.aspect = clientWidth / clientHeight;
+    camera.aspect = width / height;
     camera.updateProjectionMatrix();
-    renderer.setSize(clientWidth, clientHeight);
+    renderer.setSize(width, height);
   }
-};
+}, 500);
 
 onMounted(async() => {
+  loading.value = true;
   controller.value = await initialUniverse(container);
-  window.addEventListener('resize', handleResize);
-});
-
-onBeforeMount(() => {
-  window.removeEventListener('resize', handleResize);
+  useResizeObserver(container.value, handleResize);
+  loading.value = false;
 });
 </script>
 
