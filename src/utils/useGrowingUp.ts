@@ -5,32 +5,40 @@ interface Point {
 
 export const useGrowingUp = ({
   canvas,
+  ctx,
   baseLength = 2,
   probability = 0.5,
-  deep = 80,
-  minLevel = 6,
+  depth = 60,
+  minLevel = 5,
   color = '#fda4af',
   start = { x: 150, y: 300 },
-  startAngle = -Math.PI / 2
+  startAngle = -Math.PI / 2,
+  limit = 30
 }: {
   canvas: HTMLCanvasElement
+  ctx?: CanvasRenderingContext2D
   baseLength?: number
   probability?: number
-  deep?: number
+  depth?: number
   minLevel?: number
   color?: string
   start?: Point
   startAngle?: number
+  limit?: number
 }) => {
-  const ctx = canvas.getContext('2d')!;
+  if (!ctx)
+    ctx = canvas.getContext('2d')!;
+
   ctx.lineWidth = 0.5;
   ctx.strokeStyle = color;
 
+  const control: Record<string, number> = {};
+
   recursiveGrow(start, startAngle, baseLength);
 
-  function getCoordinate(from: Point, angle: number, length: number) {
-    const x = from.x + Math.cos(angle) * length;
-    const y = from.y + Math.sin(angle) * length;
+  function getEndPoint(start: Point, angle: number, length: number) {
+    const x = start.x + Math.cos(angle) * length;
+    const y = start.y + Math.sin(angle) * length;
     return { x, y };
   }
 
@@ -48,9 +56,13 @@ export const useGrowingUp = ({
   }
 
   function recursiveGrow(from: Point, angle: number, length: number, l = 0) {
-    const to = getCoordinate(from, angle, length);
+    control[l] = (control[l] || 0) + 1;
+    const to = getEndPoint(from, angle, length);
     drawLine(from, to);
-    if (l < deep && isInRange(to)) {
+
+    if (control[l] > limit)
+      return;
+    if (l < depth && isInRange(to)) {
       requestAnimationFrame(() => {
         // left
         if (l < minLevel || Math.random() < probability)
