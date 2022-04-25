@@ -59,5 +59,8 @@ const label = computed(() => {
 
     <!-- component -->
     <component :is="experimentComponent" :key="id" v-bind="{ list }" />
+
+    <!-- footer -->
+    <footer class="w-full h-8" />
   </div>
 </template>
