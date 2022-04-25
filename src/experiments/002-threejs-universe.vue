@@ -3,6 +3,7 @@ import { onMounted, ref } from 'vue';
 import { throttle } from 'lodash-es';
 import { useResizeObserver } from '@vueuse/core';
 import Description from '~/components/Description.vue';
+import CanvasBox from '~/components/CanvasBox.vue';
 import { initialUniverse } from '~/utils/useThreeJS';
 
 const container = ref<HTMLElement | undefined>();
@@ -33,7 +34,7 @@ onMounted(async() => {
   <div class="w-full">
     <Description class="mb-10" :content="['基于 Three.js 渲染的小宇宙⭐']" />
     <div class="w-full px-4">
-      <div ref="container" v-loading="loading" class="box-border border border-gray-300 w-full max-w-720px  h-480px" />
+      <CanvasBox ref="container" v-loading="loading" />
     </div>
   </div>
 </template>
