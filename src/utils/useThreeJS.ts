@@ -35,8 +35,6 @@ const CAMERA_CONFIG = {
   ROTATE_SPEED: 0.1
 };
 
-const RESOURCE_TOTAL = 3;
-
 const MAP = {
   SHENZHEN: { longitude: 114.085947, latitude: 22.547 },
   NANCHONG: { longitude: 106.108996, latitude: 30.781809 },
@@ -67,20 +65,11 @@ const FLY_LINES = {
 };
 
 // method
-function renderCoordsLine(radius, coordinates, color, offsetY = 0) {
-  const group = new THREE.Group();
-  coordinates.forEach((polygon) => {
-    const points = [];
-    polygon[0].forEach((coordinate) => {
-      const { x, y, z } = coordinate2xyz(radius, coordinate[0], coordinate[1]);
-      points.push(x, y + offsetY, z);
-    });
-    group.add(line(points, color));
-  });
-  return group;
+function formatCoordinate(type: string, coordinates: number[][][] | number[][][][]) {
+  return type === 'Polygon' ? [coordinates] as number[][][][] : coordinates as number[][][][];
 }
 
-function line(points, color) {
+function line(points: number[], color: string | number) {
   const geometry = new THREE.BufferGeometry();
   const vertices = new Float32Array(points);
   const attribue = new THREE.BufferAttribute(vertices, 3);
@@ -92,8 +81,21 @@ function line(points, color) {
   return line;
 }
 
+function renderCoordsLine(radius: number, coordinates: number[][][][], color: number | string, offsetY = 0) {
+  const group = new THREE.Group();
+  coordinates.forEach((polygon) => {
+    const points: number[] = [];
+    polygon[0].forEach((coordinate) => {
+      const { x, y, z } = coordinate2xyz(radius, coordinate[0], coordinate[1]);
+      points.push(x, y + offsetY, z);
+    });
+    group.add(line(points, color));
+  });
+  return group;
+}
+
 // 经纬度转三维坐标
-function coordinate2xyz(radius, longitude, latitude) {
+function coordinate2xyz(radius: number, longitude: number, latitude: number) {
   const lon = (longitude * Math.PI) / 180;
   const lat = (latitude * Math.PI) / 180;
   const x = radius * Math.cos(lat) * Math.sin(lon);
@@ -206,7 +208,7 @@ export const initialUniverse = async(target: MaybeElementRef) => {
     if (country.id === 'CHN')
       continue;
     const { type, coordinates } = country.geometry;
-    const _coordinates = type === 'Polygon' ? [coordinates] : coordinates;
+    const _coordinates = formatCoordinate(type, coordinates);
     const line = renderCoordsLine(EARTH_CONFIG.RADIUS, _coordinates, EARTH_CONFIG.COLOR_BASE);
     group.add(line);
   }
@@ -214,7 +216,7 @@ export const initialUniverse = async(target: MaybeElementRef) => {
   // render china
   EARTH_CONFIG.CHINA_GEO_DATA.features.forEach((country) => {
     const { type, coordinates } = country.geometry;
-    const _coordinates = type === 'Polygon' ? [coordinates] : coordinates;
+    const _coordinates = formatCoordinate(type, coordinates);
     const line = renderCoordsLine(EARTH_CONFIG.RADIUS, _coordinates, EARTH_CONFIG.COLOR_CHINA);
     group.add(line);
   });
@@ -236,7 +238,8 @@ export const initialUniverse = async(target: MaybeElementRef) => {
   AnimationAction.play();
 
   // 描点
-  const spot = (point, { x, y, z }) => {
+  function spot(point: { longitude: number; latitude: number },
+    { x, y, z }: { x: number; y: number; z: number }) {
     const { color, SIZE, OPACITY } = { ...MARK_POINTS, ...point };
     const texture = textureLoader.load('/texture/point.png');
     const geometry = new THREE.PlaneBufferGeometry(1, 1);
@@ -252,7 +255,7 @@ export const initialUniverse = async(target: MaybeElementRef) => {
     // 偏移校正
     mesh.quaternion.setFromUnitVectors(new THREE.Vector3(0, 0, 1), new THREE.Vector3(x, y, z).normalize());
     return mesh;
-  };
+  }
 
   // 初始化描点
   const points = MARK_POINTS.DATA.map((point) => {
@@ -263,13 +266,13 @@ export const initialUniverse = async(target: MaybeElementRef) => {
   group.add(...points.flat(1));
 
   // 飞线
-  const calculateBezierCoord = (x1, y1, z1, x2, y2, z2) => {
+  function calculateBezierCoord(x1: number, y1: number, z1: number, x2: number, y2: number, z2: number) {
     const [tmpx, tmpy, tmpz] = [x1 + x2, y1 + y2, z1 + z2];
     const x = (tmpx * 5) / 17 + x1 / 2;
     const y = (tmpy * 5) / 17 + y1 / 2;
     const z = (tmpz * 5) / 17 + z1 / 2;
     return { x, y, z };
-  };
+  }
 
   const { POINT_SIZE, POINT_COLOR, LINE_COLOR } = FLY_LINES;
 
@@ -311,7 +314,8 @@ export const initialUniverse = async(target: MaybeElementRef) => {
       if (flyLinePointCoefficient.value >= 1)
         flyLinePointCoefficient.value = 0;
       flyLine.forEach(({ curve, point }) => {
-        point.position.set(...curve.getPointAt(flyLinePointCoefficient.value));
+        const { x, y, z } = curve.getPointAt(flyLinePointCoefficient.value);
+        point.position.set(x, y, z);
       });
 
       flyLinePointCoefficient.value += FLY_LINES.POINT_SPEED;
