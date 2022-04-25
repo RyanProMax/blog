@@ -1,8 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue';
+import { onUpdated, ref } from 'vue';
+import { useRoute } from 'vue-router';
 import { useGrowingUp } from '~/utils/useGrowingUp';
 
-const loading = ref(false);
 const canvasRef = ref<HTMLCanvasElement | undefined>();
 
 const deep = () => 50 + Math.random() * 100;
@@ -43,16 +43,20 @@ const generate = (tag: number) => {
   }
 };
 
-onMounted(async() => {
-  loading.value = true;
+const render = () => {
+  new Array(4).fill(0).forEach((_, idx) => useGrowingUp({ canvas: canvasRef.value!, ...generate(idx) }));
+};
+
+const route = useRoute();
+
+onUpdated(() => {
   const canvas = canvasRef.value!;
   [canvas.width, canvas.height] = [window.innerWidth, window.innerHeight];
-  new Array(4).fill(0).forEach((_, idx) => useGrowingUp({ canvas: canvasRef.value!, ...generate(idx) }));
-  loading.value = false;
+  render();
 });
 
 </script>
 
 <template>
-  <canvas ref="canvasRef" class="fixed w-full h-full opacity-30 pointer-events-none -z-1" />
+  <canvas ref="canvasRef" :key="route.path" class="fixed w-full h-full opacity-30 pointer-events-none -z-1" />
 </template>
