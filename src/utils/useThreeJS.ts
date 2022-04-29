@@ -1,3 +1,4 @@
+import { ref } from 'vue';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader';
@@ -7,7 +8,6 @@ import { unrefElement } from '@vueuse/core';
 import type { MaybeElementRef } from '@vueuse/core';
 
 // assets
-import { ref } from 'vue';
 import CHINA_GEO_DATA from '~/assets/geojson/china.geo.json';
 import WORLD_GEO_DATA from '~/assets/geojson/world.geo';
 
