@@ -56,7 +56,8 @@ const FLY_LINES = {
   DATA: [
     { start: MAP.SHENZHEN, stop: MAP.SHANGHAI },
     { start: MAP.SHENZHEN, stop: MAP.NANCHONG },
-    { start: MAP.SHENZHEN, stop: MAP.QINGHAI }
+    { start: MAP.SHENZHEN, stop: MAP.QINGHAI },
+    { start: MAP.SHENZHEN, stop: MAP.GANSU }
   ],
   LINE_COLOR: '#afdfe4',
   POINT_SIZE: 0.15,
