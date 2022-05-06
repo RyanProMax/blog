@@ -20,27 +20,20 @@ export const getImageSize = (img: string) => {
   });
 };
 
-const getVectors = (imageData: Uint8ClampedArray) => {
-  const ret = [];
-  for (let i = 0; i < imageData.length; i += 4)
-    ret.push([imageData[i], imageData[i + 1], imageData[i + 2], imageData[i + 3]]);
-
-  return ret;
-};
-
 export const useKmeans = async(imageUrl: string, cb: (arg0: any) => void) => {
   const { width, height, imageElement } = await getImageSize(imageUrl);
   const canvas = document.createElement('canvas');
   [canvas.width, canvas.height] = [width, height];
   const ctx = canvas.getContext('2d')!;
   ctx.drawImage(imageElement, 0, 0);
-  const vectors = getVectors(ctx.getImageData(0, 0, width, height).data);
+  const imageData = ctx.getImageData(0, 0, width, height).data;
+
   if (!worker)
     worker = new KmeansWorker();
 
   worker.postMessage({
     type: 'kmeans',
-    data: vectors
+    data: imageData
   });
 
   worker.onmessage = (e) => {
@@ -48,7 +41,7 @@ export const useKmeans = async(imageUrl: string, cb: (arg0: any) => void) => {
       kmeansResult: e.data,
       width,
       height,
-      vectors
+      imageData
     });
   };
 };
@@ -72,8 +65,8 @@ export const vectorsToBase64 = (vectors: number[][], width: number, height: numb
   return canvas.toDataURL();
 };
 
-export const updatePixel = ({ vectors, targetIndex, width, height, r, g, b, a }: {
-  vectors: number[][]
+export const updatePixel = ({ imageData, targetIndex, ...rest }: {
+  imageData: Uint8ClampedArray
   targetIndex: number[]
   width: number
   height: number
@@ -88,17 +81,14 @@ export const updatePixel = ({ vectors, targetIndex, width, height, r, g, b, a }:
   worker.postMessage({
     type: 'updatePixel',
     data: {
-      vectors: JSON.stringify(vectors),
-      targetIndex: JSON.stringify(targetIndex),
-      r,
-      g,
-      b,
-      a
+      imageData,
+      targetIndex,
+      ...rest
     }
   });
 
   worker.onmessage = (e) => {
-    const url = vectorsToBase64(e.data, width, height);
+    const url = vectorsToBase64(e.data, rest.width, rest.height);
     cb(url);
   };
 };

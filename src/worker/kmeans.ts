@@ -1,17 +1,25 @@
 import kmeans from 'ml-kmeans';
 
+const getVectors = (imageData: Uint8ClampedArray) => {
+  const ret = [];
+  for (let i = 0; i < imageData.length; i += 4)
+    ret.push([imageData[i], imageData[i + 1], imageData[i + 2], imageData[i + 3]]);
+
+  return ret;
+};
+
 onmessage = function(e) {
   const { type, data } = e.data;
   switch (type) {
     case 'kmeans': {
-      const kmeansResult = kmeans(data, 4);
+      const vectors = getVectors(data);
+      const kmeansResult = kmeans(vectors, 4);
       postMessage(kmeansResult);
       break;
     }
     case 'updatePixel': {
-      const { r, g, b, a } = data;
-      const vectors = JSON.parse(data.vectors);
-      const targetIndex = JSON.parse(data.targetIndex);
+      const { r, g, b, a, imageData, targetIndex } = data;
+      const vectors = getVectors(imageData);
       targetIndex.forEach((idx: number) => {
         vectors[idx] = [~~r, ~~g, ~~b, ~~(a * 255)];
       });

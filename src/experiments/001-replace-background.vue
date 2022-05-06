@@ -15,13 +15,13 @@ const previewUrl = ref('');
 const bgColor = ref<string | null>(null);
 const loading = ref(false);
 const supportWorker = window.Worker;
-const store = ref<{
+let store: {
   width: number
   height: number
   kmeansResult: any
-  vectors: number[][]
+  imageData: Uint8ClampedArray
   targetIndex: number[]
-} | null>(null);
+};
 
 const handleChange = (file: UploadFile) => {
   const r = new Compressor(file.raw!, {
@@ -49,7 +49,7 @@ watch(imageUrl, (url) => {
     const [r, g, b, a] = target.centroid;
     bgColor.value = `rgba(${r}, ${g}, ${b}, ${a / 255})`;
     const targetIndex = ((result.kmeansResult.clusters as number[]).map((x, idx) => x === targetCentroidIndex ? idx : null).filter(x => x !== null));
-    store.value = { ...result, targetIndex: (targetIndex as number[]) };
+    store = { ...result, targetIndex: (targetIndex as number[]) };
     loading.value = false;
   });
 }, { immediate: true });
@@ -58,14 +58,14 @@ watch(bgColor, (color) => {
   loading.value = true;
   if (color) {
     const [r, g, b, a] = (color.match(/(\d(\.\d+)?)+/g) as string[]).map(Number);
-    updatePixel({ ...store.value!, r, g, b, a }, (url) => {
+    updatePixel({ ...store, r, g, b, a }, (url) => {
       previewUrl.value = url;
       loading.value = false;
     });
   }
   else {
     // 透明背景
-    updatePixel({ ...store.value!, r: 0, g: 0, b: 0, a: 0 }, (url) => {
+    updatePixel({ ...store, r: 0, g: 0, b: 0, a: 0 }, (url) => {
       previewUrl.value = url;
       loading.value = false;
     });
