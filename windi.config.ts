@@ -2,8 +2,9 @@ import { defineConfig } from 'windicss/helpers';
 import colors from 'windicss/colors';
 
 /**
- * 英文文档：https://windicss.org/
- * 中文文档: https://cn.windicss.org/
+ * windicss document
+ * English: https://windicss.org/
+ * Chinese: https://cn.windicss.org/
  */
 export default defineConfig({
   darkMode: 'class',

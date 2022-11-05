@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { useDark, useToggle } from '@vueuse/core';
 import { computed } from 'vue';
-import Joker from '~icon/joker.svg';
-import Sun from '~icon/sun.svg';
-import Moon from '~icon/moon.svg';
-import Github from '~icon/github.svg';
-import ExampleIcon from '~icon/example.svg';
+
+// icon
+import Joker from '~icon/joker.svg?component';
+import Sun from '~icon/sun.svg?component';
+import Moon from '~icon/moon.svg?component';
+import Github from '~icon/github.svg?component';
+import ExampleIcon from '~icon/example.svg?component';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);

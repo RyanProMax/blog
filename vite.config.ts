@@ -8,8 +8,7 @@ import WindiCSS from 'vite-plugin-windicss';
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
-
-import { SvgLoader } from './src/utils/plugins';
+import SvgLoader from 'vite-svg-loader';
 
 // const isProd = process.env.NODE_ENV === 'production';
 

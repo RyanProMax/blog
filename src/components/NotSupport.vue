@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import Joker from '~/assets/svg/joker.svg';
+import Joker from '~icon/joker.svg?component';
 
 const { content } = defineProps<{
   content: string
