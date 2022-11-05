@@ -5,17 +5,17 @@ import Joker from '~icon/joker.svg';
 import Sun from '~icon/sun.svg';
 import Moon from '~icon/moon.svg';
 import Github from '~icon/github.svg';
-import Experiment from '~icon/experiment.svg';
+import ExampleIcon from '~icon/example.svg';
 
 const isDark = useDark();
 const toggleDark = useToggle(isDark);
 
 const navList = computed(() => ([
   {
-    name: 'Experiment',
-    icon: Experiment,
+    name: 'Examples',
+    icon: ExampleIcon,
     showText: true,
-    path: '/experiment',
+    path: '/examples',
     external: false
   },
   {
@@ -42,7 +42,10 @@ const navList = computed(() => ([
     </router-link>
     <div class="flex flex-row items-center text-gray-400">
       <template v-for="item in navList" :key="item.name">
-        <router-link v-if="!item.external && !item.clickEvent" :to="item.path" :title="item.name" class="inline-flex not-last:mr-4" active-class="text-red-500 svg:fill-red-500 dark:svg:fill-red-500">
+        <router-link
+          v-if="!item.external && !item.clickEvent" :to="item.path" :title="item.name"
+          class="inline-flex not-last:mr-4" active-class="text-red-500 svg:fill-red-500 dark:svg:fill-red-500"
+        >
           <span class="hidden md:inline-block text-hover text-hover-red">{{ item.name }}</span>
           <component :is="item.icon" class="icon icon-red md:hidden" />
         </router-link>

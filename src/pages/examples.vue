@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { capitalize } from 'lodash-es';
 
-const files = import.meta.globEager('../experiments/*.vue');
+const files = import.meta.globEager('../examples/*.vue');
 const list = Object.keys(files).map((path) => {
   const fileName = path.split('\/').pop()!.replace('.vue', '');
   const fileNameArr = fileName.split('-');
