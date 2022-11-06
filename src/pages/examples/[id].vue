@@ -39,18 +39,18 @@ const label = computed(() => {
   <div class="w-full max-w-720px flex flex-col items-center">
     <div v-if="label.prev" class="w-full flex">
       <Starport :port="label.prev.index" class="w-full min-w-200px h-6">
-        <ExampleTitle v-bind="label.prev" class=" text-gray-300 hover:text-gray-500 <sm:justify-center" />
+        <ExampleTitle v-bind="label.prev" class="transition-all duration-800 text-gray-300 hover:text-gray-500 <sm:justify-center" />
       </Starport>
     </div>
     <div v-if="label.curr" class="w-full">
       <Starport :port="label.curr.index" class="w-full min-w-200px h-12 <sm:h-8">
         <ExampleTitle v-bind="label.curr"
-          class="text-red-500 text-3xl leading-12 <sm:(justify-center text-2xl leading-8)" />
+          class="transition-all duration-800 text-red-500 text-3xl leading-12 <sm:(justify-center text-2xl leading-8)" />
       </Starport>
     </div>
     <div v-if="label.next" class="w-full flex">
       <Starport :port="label.next.index" class="w-full min-w-200px h-6">
-        <ExampleTitle v-bind="label.next" class="text-gray-300 hover:text-gray-500 <sm:justify-center" />
+        <ExampleTitle v-bind="label.next" class="transition-all duration-800 text-gray-300 hover:text-gray-500 <sm:justify-center" />
       </Starport>
     </div>
 
