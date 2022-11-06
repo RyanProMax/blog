@@ -12,18 +12,25 @@ const currentFile = ref<UploadFile>();
   args: ['-i', 'video.avi', '-c:v', 'libx264', 'video.mp4']
 }); */
 const src = ref<string>('');
-const time = ref<number>(0);
+const progress = ref({ ratio: 0, time: 0 });
+const logger = ref<string>('');
 
 onMounted(async() => {
   loading.value = true;
-  const _ffmpeg = createFFmpeg({ log: true });
+  const _ffmpeg = createFFmpeg({
+    log: true,
+    progress: ({ ratio }) => {
+      progress.value.ratio = ratio;
+    }
+  });
+  _ffmpeg.setLogger(({ type, message }) => { logger.value = `[${type}] ${message}`; });
   await _ffmpeg.load();
   ffmpeg.value = _ffmpeg;
   loading.value = false;
 });
 
 const handleChange = async(file: UploadFile) => {
-  time.value = 0;
+  progress.value = { ratio: 0, time: 0 };
   if (!ffmpeg.value)
     return;
 
@@ -34,7 +41,7 @@ const handleChange = async(file: UploadFile) => {
   await ffmpeg.value?.run('-i', name, 'output.mp4');
   const data = ffmpeg.value.FS('readFile', 'output.mp4');
   src.value = URL.createObjectURL(new Blob([data.buffer], { type: 'video/mp4' }));
-  time.value = Date.now() - start;
+  progress.value = { ratio: 0, time: Date.now() - start };
 };
 </script>
 
@@ -46,6 +53,9 @@ const handleChange = async(file: UploadFile) => {
     />
 
     <div v-loading="loading" class="w-full flex flex-col items-center">
+      <p v-if="logger" class="mb-4">
+        log: {{ logger }}
+      </p>
       <el-upload
         action="#" :show-file-list="false" :auto-upload="false" accept="video/*, audio/*"
         :on-change="handleChange"
@@ -55,8 +65,13 @@ const handleChange = async(file: UploadFile) => {
         </el-button>
       </el-upload>
       <video v-if="src" :src="src" controls class="mt-4" />
-      <p v-if="time" class="mt-4">
-        Done in {{ time }} ms
+      <p v-if="progress.ratio || progress.time" class="mt-4">
+        <template v-if="progress.ratio">
+          {{ (progress.ratio * 100).toFixed(2) }} %
+        </template>
+        <template v-if="progress.time">
+          Done in {{ progress.time }} ms
+        </template>
       </p>
     </div>
   </div>
