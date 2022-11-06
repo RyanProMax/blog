@@ -13,7 +13,7 @@
       <a href="https://antfu.me/" target="__blank" class="text-red-500 text-hover text-hover-red">@Anthony Fu</a>.
     </p>
     <p class="mt-8">
-      Now I work at <a
+      I'm currently working at <a
         href="https://www.bytedance.com/" target="__blank"
         class="text-red-500 text-hover text-hover-red"
       >@ByteDance</a>, participate in building and optimizing the electron application with JavaScript.
