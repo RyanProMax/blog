@@ -3,7 +3,10 @@
     "baseUrl": ".",
     "module": "esnext",
     "target": "esnext",
-    "lib": ["esnext", "dom"],
+    "lib": [
+      "esnext",
+      "dom"
+    ],
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -14,14 +17,22 @@
     "forceConsistentCasingInFileNames": true,
     "sourceMap": true,
     "jsx": "preserve",
+    "jsxImportSource": "vue",
     "types": [
       "vite/client",
       "vite-plugin-pages/client"
     ],
     "paths": {
-      "~/*": ["src/*"],
-      "~icon/*": ["src/assets/svg/*"]
+      "~/*": [
+        "src/*"
+      ],
+      "~icon/*": [
+        "src/assets/svg/*"
+      ]
     }
   },
-  "exclude": ["dist", "node_modules"]
+  "exclude": [
+    "dist",
+    "node_modules"
+  ]
 }
