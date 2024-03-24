@@ -2,6 +2,7 @@
   "name": "blog",
   "version": "0.0.1",
   "private": true,
+  "packageManager": "pnpm@7.33.6",
   "scripts": {
     "dev": "vite",
     "build": "pnpm typecheck && vite build",
