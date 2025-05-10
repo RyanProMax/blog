@@ -7,20 +7,19 @@ interface Project {
 
 const projectsData: Project[] = [
   {
-    title: 'A Search Engine',
-    description: `What if you could look up any information in the world? Webpages, images, videos
-    and more. Google has many features to help you find exactly what you're looking
-    for.`,
-    imgSrc: '/static/images/google.png',
-    href: 'https://www.google.com',
+    title: 'Douyin Live Studio',
+    description: `Douyin's official live streaming tool, supporting various live streams including
+    entertainment, gaming, and e-commerce. It offers one-click streaming start, real-time audio/video 
+    processing, beauty filters, and comment management, helping hosts create high-quality broadcasts effortlessly`,
+    imgSrc: '/static/images/webcast-mate.png',
+    href: 'https://streamingtool.douyin.com/',
   },
   {
-    title: 'The Time Machine',
-    description: `Imagine being able to travel back in time or to the future. Simple turn the knob
-    to the desired date and press "Go". No more worrying about lost keys or
-    forgotten headphones with this simple yet affordable solution.`,
-    imgSrc: '/static/images/time-machine.jpg',
-    href: '/blog/the-time-machine',
+    title: 'Electron React Rspack',
+    description: `An Electron-React boilerplate with TypeScript & Rspack, supporting persistent storage, 
+    local logging, incremental updates, and more.`,
+    imgSrc: '/static/images/electron-react-rspack.png',
+    href: 'https://github.com/RyanProMax/electron-react-rspack',
   },
 ]
 
