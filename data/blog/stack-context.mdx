@@ -1,0 +1,75 @@
+---
+title: 什么是层叠上下文
+date: '2021-06-15'
+tags: ['CSS']
+draft: false
+summary: 彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index
+---
+
+> [彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index](https://juejin.cn/post/6844903667175260174)
+>
+> [CSS 中重要的层叠概念](https://juejin.cn/post/6844904145766334472)
+>
+> [浏览器层合成与页面渲染优化](https://juejin.cn/post/6844903966573068301)
+>
+> [MDN：层叠上下文](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+
+![stack-context](/static/images/stack-context/01.png)
+
+![stack-context](/static/images/stack-context/02.png)
+
+### 渲染层
+
+_具有层叠上下文的元素，在没有特殊属性的前提下，会共用根元素的渲染层。_
+
+_浏览器本身具有层压缩的特性（防止层爆炸）。_
+
+如果把处于底层的盒子元素单独提升到`合成层`，那么在它上面所有元素都会提升成合成层，且会被压缩至同一个合成层中。
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .box {
+        width: 100px;
+        height: 100px;
+        position: absolute;
+      }
+      .box1 {
+        background-color: red;
+        left: 100px;
+        top: 100px;
+
+        /* 单独提升至合成层 */
+        /* transform: translateZ(0); */
+      }
+      .box2 {
+        background-color: blue;
+        left: 150px;
+        top: 150px;
+      }
+      .box3 {
+        background-color: yellow;
+        left: 200px;
+        top: 200px;
+      }
+      .box4 {
+        background-color: green;
+        left: 250px;
+        top: 250px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="box box1"></div>
+    <div class="box box2"></div>
+    <div class="box box3"></div>
+    <div class="box box4"></div>
+  </body>
+</html>
+```
