@@ -1,5 +1,5 @@
 <h1 align='center'>
-  Ryan's Blog
+  <a href="https://ryanpromax.github.io/blog/">Ryan's Blog</a>
 </h1>
 
 <!-- <p align='center'>
