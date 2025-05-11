@@ -62,7 +62,7 @@ export const EXPERIENCES: Experience[] = [
           </li>
           <li>
             Optimized <strong>PC game capture</strong> and <strong>mobile-to-screen casting</strong>
-            , enhancing performance and stability
+            , enhancing performance and stability.
           </li>
         </ul>
       )
