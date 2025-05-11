@@ -19,7 +19,6 @@ export const EXPERIENCES = [
     start: 'Jul 2021',
     end: 'PRESENT',
     title: '🧑‍💻​Gaming Director of Douyin Live Studio',
-    event: 'career-bytedance',
     // details: () => {
     //   return (
     //     <ul className="[&>li]:my-2 [&>li]:pl-0">
@@ -47,7 +46,6 @@ export const EXPERIENCES = [
     start: 'Jun 2020',
     end: 'Jul 2021',
     title: '🧑‍💻Front-end Group Lead',
-    event: 'career-gainer',
   },
   {
     org: 'China Unicom',
@@ -56,7 +54,6 @@ export const EXPERIENCES = [
     start: 'Jul 2016',
     end: 'May 2020',
     title: '🧑‍💻Front-end Engineer',
-    event: 'career-china-unicom',
   },
   {
     org: 'Sun Yat-sen University',
@@ -65,6 +62,5 @@ export const EXPERIENCES = [
     start: 'Sep 2012',
     end: 'Jun 2016',
     title: '🧑‍💻BEng | Microelectronics',
-    event: 'education-BEng',
   },
 ]

@@ -7,7 +7,7 @@ import Image from '@/components/Image'
 import { EXPERIENCES } from './Experience'
 
 export const TimelineItem = ({ exp, last }: { exp: (typeof EXPERIENCES)[0]; last?: boolean }) => {
-  const { org, url, logo, start, end, title, event, details: Details } = exp
+  const { org, url, logo, start, end, title, details: Details } = exp
 
   return (
     <div
@@ -26,12 +26,27 @@ export const TimelineItem = ({ exp, last }: { exp: (typeof EXPERIENCES)[0]; last
       <Image
         src={logo}
         alt={org}
-        className="!m-0 h-12 w-12 shrink-0 rounded-md bg-white object-contain group-hover/timeline-item:bg-slate-100 dark:bg-gray-950 dark:group-hover/timeline-item:bg-slate-800"
+        className="!m-0 h-12 w-12 shrink-0 rounded-md bg-white object-contain dark:bg-gray-950"
         width={200}
         height={200}
       />
-      <details className="relative w-full !bg-inherit [&_.minus]:open:block [&_.plus]:open:hidden">
+      <details className={clsx(['group relative w-full !bg-inherit'])}>
         <summary className="pr-10 marker:content-none">
+          <div
+            className={clsx(
+              [
+                'absolute top-1 right-1',
+                'transition-transform duration-300 ease-in-out',
+                'text-gray-600 dark:text-gray-500',
+              ],
+              {
+                hidden: !Details,
+              }
+            )}
+          >
+            <Plus size={18} className={clsx(['md:invisible', 'group-open:hidden'])} />
+            <Minus size={18} className={clsx(['hidden', 'group-open:block'])} />
+          </div>
           <div className="flex flex-col">
             <div className="line-clamp-1 text-xs text-gray-500 tabular-nums dark:text-gray-400">
               <span>{start}</span> – <span>{end}</span>
@@ -48,33 +63,9 @@ export const TimelineItem = ({ exp, last }: { exp: (typeof EXPERIENCES)[0]; last
           </div>
         </summary>
         {Details ? (
-          <>
-            <div className={clsx(['absolute top-1 right-1'])}>
-              <Plus
-                size={18}
-                className={clsx([
-                  'plus',
-                  'group-hover/timeline-item:visible md:invisible',
-                  'transition-transform duration-300 ease-in-out',
-                  'text-gray-600 dark:text-gray-500',
-                ])}
-                data-umami-event={`${event} expand`}
-              />
-              <Minus
-                size={18}
-                className={clsx([
-                  'minus hidden',
-                  'transition-transform duration-300 ease-in-out',
-                  'text-gray-600 dark:text-gray-500',
-                ])}
-                data-umami-event={`${event} collapse`}
-              />
-            </div>
-
-            <div className="pt-1 text-base">
-              <Details />
-            </div>
-          </>
+          <div className="pt-1 text-base">
+            <Details />
+          </div>
         ) : null}
       </details>
     </div>
