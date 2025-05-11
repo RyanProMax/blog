@@ -72,6 +72,9 @@ export function ElectronIcon() {
     <svg
       width={22}
       height={22}
+      style={{
+        filter: 'brightness(1)',
+      }}
       viewBox="-11 0 278 278"
       version="1.1"
       preserveAspectRatio="xMidYMid"

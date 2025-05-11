@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import {
   ElectronIcon,
   ReactIcon,
@@ -23,7 +24,13 @@ export const FamiliarTechStack = () => {
         return (
           <div
             key={t}
-            className=":border-white flex items-center justify-center gap-2 rounded-md border bg-black p-1 px-2 text-sm font-bold text-white md:text-base"
+            className={clsx([
+              'flex items-center justify-center',
+              'gap-2 p-1 px-2',
+              'rounded-md border',
+              'text-sm font-bold md:text-base',
+              'border-black bg-transparent text-black dark:border-white dark:text-white',
+            ])}
           >
             {t}
             <div>

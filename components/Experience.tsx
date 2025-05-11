@@ -58,9 +58,9 @@ export const EXPERIENCES = [
   {
     org: 'Sun Yat-sen University',
     url: 'https://www.sysu.edu.cn/',
-    logo: '/static/images/timeline/SYSU.svg',
+    logo: '/static/images/timeline/SYSU.png',
     start: 'Sep 2012',
     end: 'Jun 2016',
-    title: '🧑‍💻BEng | Microelectronics',
+    title: '🧑‍🎓BEng | Microelectronics',
   },
 ]
