@@ -3,28 +3,57 @@ title: 什么是层叠上下文
 date: '2021-06-15'
 tags: ['CSS']
 draft: false
-summary: 彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index
+summary: 彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index。
 ---
 
-> [彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index](https://juejin.cn/post/6844903667175260174)
->
-> [CSS 中重要的层叠概念](https://juejin.cn/post/6844904145766334472)
->
-> [浏览器层合成与页面渲染优化](https://juejin.cn/post/6844903966573068301)
->
-> [MDN：层叠上下文](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+<TOCInline toc={props.toc} asDisclosure />
 
 ![stack-context](/static/images/stack-context/01.png)
 
 ![stack-context](/static/images/stack-context/02.png)
 
-### 渲染层
 
-_具有层叠上下文的元素，在没有特殊属性的前提下，会共用根元素的渲染层。_
+### 1. 什么是层叠上下文？
 
-_浏览器本身具有层压缩的特性（防止层爆炸）。_
+层叠上下文是浏览器绘制页面时构建的一个三维环境，元素根据 z-index、定位方式、层级规则决定谁在上、谁在下。根元素（`<html>`）天然是一个层叠上下文，特定条件下的元素也会创建新的层叠上下文，例如：
 
-如果把处于底层的盒子元素单独提升到`合成层`，那么在它上面所有元素都会提升成合成层，且会被压缩至同一个合成层中。
+- position 为 absolute 或 relative 且设置了 z-index
+- 使用了 opacity < 1、transform、filter、will-change 等属性
+- mix-blend-mode 被设置时
+
+_一个新的层叠上下文将阻止其内部的子元素参与外层的 z-index 层级排序。_
+
+
+### 2. 渲染层与合成层
+
+浏览器渲染页面主要分为：
+
+1. 布局（Layout）
+
+2. 绘制（Painting）
+
+3. 合成（Compositing）
+
+合成阶段会将页面分成多个`合成层`（compositing layers），并在 GPU 中进行独立渲染。这些合成层来源于层叠上下文，但并不一一对应。
+
+默认情况下，多个层叠上下文会共用一个渲染层（也称`合成层`），即`根层`。这是浏览器的一种性能优化策略，`层压缩`（Layer Squashing）：尽可能少创建合成层，避免性能浪费。
+
+
+### 3. 什么时候会强制创建新合成层？
+
+当元素设置了某些会触发 GPU 加速的属性（如 transform、will-change、video 元素、Canvas）时，浏览器会将其提升到独立的合成层，以避免频繁重绘主层。
+
+值得注意的是：如果底层的某个盒子元素被强制提升为合成层（如设置 will-change: transform），那么其上方所有需要与之叠加的元素也会被提升，并最终被合并到同一个新合成层中。
+
+换句话说，合成层不是无限叠加的，浏览器会在保证视觉正确的前提下合并层级，避免`层爆炸`。
+
+### 4. 实践建议
+
+- 尽量避免滥用 will-change 或 transform 提升合成层，否则可能适得其反，引起多个元素层级被打包进同一层，导致内存占用上升。
+
+- 使用浏览器开发者工具（如 Chrome 的 Layers 面板）查看渲染层结构，有助于调试和优化性能。
+
+### 5. 测试代码
 
 ```html
 <!DOCTYPE html>
@@ -73,3 +102,16 @@ _浏览器本身具有层压缩的特性（防止层爆炸）。_
   </body>
 </html>
 ```
+
+
+>
+> 参考文章
+>
+> [彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index](https://juejin.cn/post/6844903667175260174)
+>
+> [CSS 中重要的层叠概念](https://juejin.cn/post/6844904145766334472)
+>
+> [浏览器层合成与页面渲染优化](https://juejin.cn/post/6844903966573068301)
+>
+> [MDN：层叠上下文](https://developer.mozilla.org/zh-CN/docs/Web/CSS/CSS_Positioning/Understanding_z_index/The_stacking_context)
+>
