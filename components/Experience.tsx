@@ -30,25 +30,43 @@ export const EXPERIENCES: Experience[] = [
     start: 'Jul 2021',
     end: 'PRESENT',
     title: '🧑‍💻​Gaming Director of Douyin Live Studio',
-    // details: () => {
-    //   return (
-    //     <ul className="[&>li]:my-2 [&>li]:pl-0">
-    //       <li>
-    //         Build{' '}
-    //         <a href="https://ecomheat.youneteci.com" rel="noopener noreferrer" target="_blank">
-    //           Ecomheat
-    //         </a>{' '}
-    //         - a website helps to measure the performance of the industry and players on E-Commerce
-    //         platforms thru cross E-commerce channels.
-    //       </li>
-    //       <li>
-    //         Build <strong>AppCore</strong> - Developed and published core NestJS packages, including
-    //         DatabaseModule, CacheModule, RedisModule, ConfigModule and others on npm to accelerate
-    //         development and deployment across multiple projects.
-    //       </li>
-    //     </ul>
-    //   )
-    // },
+    details: () => {
+      return (
+        <ul className="[&>li]:my-2 [&>li]:pl-0">
+          <li>
+            Responsible for developing and iterating core live-stream features such as{' '}
+            <a
+              href="https://developer.open-douyin.com/docs/resource/zh-CN/interaction/introduction/live-play/1"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Bullet‐screen Gameplay
+            </a>
+            ,{' '}
+            <a
+              href="https://streamingtool.douyin.com/docs/guide/dual"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Dual-Screen broadcasting
+            </a>
+            , and{' '}
+            <a
+              href="https://streamingtool.douyin.com/docs/guide/72891"
+              rel="noopener noreferrer"
+              target="_blank"
+            >
+              Game-linking
+            </a>
+            .
+          </li>
+          <li>
+            Optimized <strong>PC game capture</strong> and <strong>mobile-to-screen casting</strong>
+            , enhancing performance and stability
+          </li>
+        </ul>
+      )
+    },
   },
   {
     org: 'GainerTech Co., Ltd.',
