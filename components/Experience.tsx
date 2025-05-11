@@ -29,7 +29,7 @@ export const EXPERIENCES: Experience[] = [
     logo: '/static/images/timeline/bytedance.svg',
     start: 'Jul 2021',
     end: 'PRESENT',
-    title: '🧑‍💻​Gaming Director of Douyin Live Studio',
+    title: '🧑‍💻​Head of Game Direction at Douyin Live Studio',
     details: () => {
       return (
         <ul className="[&>li]:my-2 [&>li]:pl-0">
