@@ -4,9 +4,9 @@ import { Minus, Plus } from 'lucide-react'
 import Link from '@/components/Link'
 import Image from '@/components/Image'
 
-import { EXPERIENCES } from './Experience'
+import type { Experience } from './Experience'
 
-export const TimelineItem = ({ exp, last }: { exp: (typeof EXPERIENCES)[0]; last?: boolean }) => {
+export const TimelineItem = ({ exp, last }: { exp: Experience; last?: boolean }) => {
   const { org, url, logo, start, end, title, details: Details } = exp
 
   return (

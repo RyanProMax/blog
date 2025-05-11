@@ -1,4 +1,15 @@
+import { JSX } from 'react'
 import { TimelineItem } from '@/components/TimelineItem'
+
+export interface Experience {
+  org: string
+  url: string
+  logo: string
+  start: string
+  end: string
+  title: string
+  details?: () => JSX.Element
+}
 
 export const Timeline = () => {
   return (
@@ -11,7 +22,7 @@ export const Timeline = () => {
     </ul>
   )
 }
-export const EXPERIENCES = [
+export const EXPERIENCES: Experience[] = [
   {
     org: 'ByteDance',
     url: 'https://www.bytedance.com/',
