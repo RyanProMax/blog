@@ -6,6 +6,7 @@ import {
   JavaScript,
   PythonIcon,
   Git,
+  NodeJS,
 } from '@/components/tech-icons'
 
 export const DevIcons = {
@@ -13,6 +14,7 @@ export const DevIcons = {
   React: ReactIcon,
   TypeScript: TypeScript,
   JavaScript: JavaScript,
+  NodeJS: NodeJS,
   Python: PythonIcon,
   Git: Git,
 }
