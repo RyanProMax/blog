@@ -1,0 +1,68 @@
+---
+title: 什么是 Electron
+date: '2025-05-18'
+tags: ['Electron']
+draft: false
+summary: What's Electron? Why Electron?
+---
+
+<TOCInline toc={props.toc} asDisclosure />
+
+## 1. [What's Electron](https://www.electronjs.org/)
+
+![electron](/static/images/electron/01.png)
+
+Electron 是一个使用 JavaScript、HTML 和 CSS 构建跨平台桌面应用的开源框架。
+
+它通过将 Chromium 浏览器引擎和 Node.js 运行时嵌入到同一个可执行文件中，使开发者可以维护一套 JavaScript 代码库，即可在 Windows、macOS 和 Linux 上运行应用。
+
+也意味着，Electron 允许 Web 前端开发者 **“无需原生开发经验”** 即可快速构建桌面应用。
+
+
+### 主进程和渲染进程
+
+![electron-structure](/static/images/electron/02.png)
+
+Electron 继承了 Chromium 的多进程架构，应用分为`主进程`和`渲染进程`两种。
+
+- **主进程 (Main Process)**：Electron 应用只有一个主进程，作为应用的入口，运行在 Node.js 环境中，可以调用 Node.js 提供的所有 API。主要负责管理应用生命周期和创建/管理应用窗口等，比如利用 `BrowserWindow` 创建浏览器窗口，并管理菜单、对话框、系统托盘等。
+
+- **渲染进程 (Renderer Process)**：每个 BrowserWindow 对应一个渲染进程，负责加载网页以呈现用户界面。渲染进程代码需遵循 Web 标准，可使用常见的前端技术栈来编写用户界面。多个窗口对应多个相互隔离的渲染进程，一个页面崩溃不会影响其他窗口。
+
+
+### 整合 Chromium 和 Node.js
+
+值得注意的一点是：**Electron 是将 Node.js 的事件循环 libuv 集成到 Chromium 的 message loop 中，整合了二者的事件循环。**
+
+> [Electron 集成 Node event loop 和 Chromium message loop 事件循环原理探究](https://juejin.cn/post/7153280595412385805)
+
+
+并且，***Chromium 与 Node.js 共享同一份 V8 库***，在构建时通过设置 node_shared=true 及关闭 Node.js 自带 V8，使得渲染进程和主进程都使用 Chromium 打包的 V8 实现。
+
+而在运行时，Electron 遵循 Chromium 的多进程架构：***每个渲染进程和主进程都会各自启动一套 V8 运行循环（runloop），彼此相互隔离***。
+
+
+### 渲染进程可直接调用 Node.js
+
+在 `nodeIntegration` 启用的前提下，渲染进程拥有完整的 Node.js API（如 require、fs、path 等）并在自身进程内执行：
+
+- **独立运行时环境**：渲染进程在启动时，会注入 Node.js 全局对象（process、Buffer、require 等）并初始化 libuv、Node 核心模块。***每个渲染进程既是一个 Chromium 渲染沙箱，也是一个完整的 Node.js 运行时。***
+
+- **本地执行**：当渲染进程调用任意 Node.js API（例如文件读写），调用会在该渲染进程的 Node.js 运行时中直接走 libuv 的 I/O 线程池或事件循环，并`不会`转发到主进程。
+
+- **IPC 与主进程**：主进程与渲染进程之间仅通过 `ipcRenderer`/`ipcMain` 交换消息，用于窗口管理、权限边界或安全沙箱等场景；Node API 本身并不依赖 IPC。
+
+但出于安全考虑，Electron 官方推荐`关闭` nodeIntegration，通过预加载脚本（preload）与 contextBridge 精确暴露所需接口，而非开放全部 Node.js 能力。
+
+
+## 2. Why Electron
+
+|      框架       |           技术栈         |    性能 (启动/内存)   |    原生感     |               优势              |                 劣势               |
+|-----------------|-------------------------|----------------------|--------------|---------------------------------|------------------------------------|
+|     Electron    | JS + Chromium + Node.js |    慢/高 (≥120 MB)   | 低，浏览器渲染 |       Web生态成熟，社区活跃      | 包体大、启动慢，内存占用高，UI 非原生 |
+|       CEF       |    C/C++ + Chromium     | 慢/高 (Chrome 同等级) | 低，浏览器渲染 | 直接嵌入原生 C++ 应用，多语言绑定 |         集成复杂，开发门槛高        |
+|        QT       |           C++           |    快/低（接近原生）  |  高，原生控件  | 性能优秀，高度原生化，跨平台支持广 |        开发门槛高，商业授权成本      |
+| Flutter Desktop |        Dart + Skia      |    快/中（AOT 编译）  |  中，框架自绘  | 热重载快，一致性好，UI 可高度定制 |        UI与系统风格差异，生态一般    |
+|      Tauri      |    Rust + 系统 WebView  |     快/低（≈80 MB）   |低，WebView 渲染|    轻量、安全，包体积小，性能优   |        Rust学习成本，生态一般       |
+|      Wails      |     Go + 系统 WebView   |  快/低（轻量Webview） |低，WebView 渲染|  Go 语言简洁，包体积小，模板丰富   |         Go学习成本，生态一般       |
+|    RN Desktop   |       JS + 原生控件     | 中/中（JS Bundle 加载）|  高，原生控件  | 基于React，UI 原生，微软官方支持  | 桌面支持需额外配置，生态逊色于Electron |
