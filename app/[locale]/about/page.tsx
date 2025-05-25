@@ -4,11 +4,16 @@ import AuthorLayout from '@/layouts/AuthorLayout';
 import { coreContent } from 'pliny/utils/contentlayer';
 import { genPageMetadata } from 'app/[locale]/seo';
 import { Timeline } from '@/components/Experience';
+import { DEFAULT_LOCALE } from '@/locales/config';
+import { ComponentProps } from '@/types/index';
 
 export const metadata = genPageMetadata({ title: 'About' });
 
-export default function Page() {
-  const author = allAuthors.find((p) => p.slug === 'default') as Authors;
+export default async function Page({ params }: ComponentProps) {
+  const { locale } = await params;
+  const author = allAuthors.find(
+    (p) => p.slug.includes('default') && p.locale === (locale || DEFAULT_LOCALE)
+  ) as Authors;
   const mainContent = coreContent(author);
 
   return (
