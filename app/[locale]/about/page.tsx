@@ -22,7 +22,7 @@ export default async function Page({ params }: ComponentProps) {
     <>
       <AuthorLayout title={title} content={mainContent}>
         <MDXLayoutRenderer code={author.body.code} />
-        <Timeline />
+        <Timeline locale={locale} />
       </AuthorLayout>
     </>
   );
