@@ -2,12 +2,11 @@ import projectsData from '@/data/projectsData';
 import Card from '@/components/Card';
 import { genPageMetadata } from 'app/[locale]/seo';
 import { DEFAULT_LOCALE, Locale } from '@/locales/config';
-import { ComponentProps } from '@/types/index';
 import { getNavLinkData } from '@/data/headerNavLinks';
 
 export const metadata = genPageMetadata({ title: 'Projects' });
 
-export default async function Projects({ params }: ComponentProps) {
+export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale = DEFAULT_LOCALE } = await params;
   const title = getNavLinkData(locale, '/projects')?.title || 'Projects';
   const description = {

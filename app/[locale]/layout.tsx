@@ -5,11 +5,10 @@ import SectionContainer from '@/components/SectionContainer';
 import Footer from '@/components/Footer';
 import siteMetadata from '@/data/siteMetadata';
 import { ThemeProviders } from './theme-providers';
-import { ComponentProps } from '@/types/index';
 
 export { generateStaticParams } from '@/locales/generateStaticParams';
 
-export default async function RootLayout({ children }: ComponentProps) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const basePath = process.env.BASE_PATH || '';
 
   return (

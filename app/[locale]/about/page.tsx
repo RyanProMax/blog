@@ -4,13 +4,12 @@ import AuthorLayout from '@/layouts/AuthorLayout';
 import { coreContent } from 'pliny/utils/contentlayer';
 import { genPageMetadata } from 'app/[locale]/seo';
 import { Timeline } from '@/components/Experience';
-import { DEFAULT_LOCALE } from '@/locales/config';
-import { ComponentProps } from '@/types/index';
+import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 import { getNavLinkData } from '@/data/headerNavLinks';
 
 export const metadata = genPageMetadata({ title: 'About' });
 
-export default async function Page({ params }: ComponentProps) {
+export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale = DEFAULT_LOCALE } = await params;
   const author = allAuthors.find(
     (p) => p.slug.includes('default') && p.locale === (locale || DEFAULT_LOCALE)

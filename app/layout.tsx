@@ -5,7 +5,6 @@ import 'remark-github-blockquote-alert/alert.css';
 import { Space_Grotesk } from 'next/font/google';
 import siteMetadata from '@/data/siteMetadata';
 import { Metadata } from 'next';
-import { ComponentProps } from '@/types/index';
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -53,7 +52,7 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: ComponentProps) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html
       lang={siteMetadata.language}

@@ -4,12 +4,11 @@ import { slug } from 'github-slugger';
 import tagData from 'app/tag-data.json';
 import { genPageMetadata } from 'app/[locale]/seo';
 import { DEFAULT_LOCALE, Locale } from '@/locales/config';
-import { ComponentProps } from '@/types/index';
 import { getNavLinkData } from '@/data/headerNavLinks';
 
 export const metadata = genPageMetadata({ title: 'Tags', description: 'Things I blog about' });
 
-export default async function Page({ params }: ComponentProps) {
+export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale = DEFAULT_LOCALE } = await params;
   const tagCounts = tagData as Record<string, number>;
   const tagKeys = Object.keys(tagCounts);

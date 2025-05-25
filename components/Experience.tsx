@@ -1,6 +1,5 @@
 import { JSX } from 'react';
 import { TimelineItem } from '@/components/TimelineItem';
-import { LocaleProps } from '@/types/index';
 import { Locale } from '@/locales/config';
 
 export interface Experience {
@@ -13,7 +12,7 @@ export interface Experience {
   details?: () => JSX.Element;
 }
 
-export const Timeline = ({ locale }: LocaleProps) => {
+export const Timeline = ({ locale }: { locale: Locale }) => {
   const e = EXPERIENCES[locale];
 
   return (
