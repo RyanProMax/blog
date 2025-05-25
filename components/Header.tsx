@@ -1,6 +1,6 @@
 'use client';
 
-import { usePathname } from 'next/navigation';
+import { usePathname, useParams } from 'next/navigation';
 
 import siteMetadata from '@/data/siteMetadata';
 import headerNavLinks from '@/data/headerNavLinks';
@@ -12,6 +12,7 @@ import SearchButton from './SearchButton';
 import LocaleSwitcher from './LocaleSwitcher';
 
 import { useLocalizedRouter } from '@/locales/useLocalizedRouter';
+import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const Header = () => {
   let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10';
@@ -19,7 +20,9 @@ const Header = () => {
     headerClass += ' sticky top-0 z-50';
   }
   const pathname = usePathname();
+  const { locale = DEFAULT_LOCALE } = useParams();
   useLocalizedRouter();
+  const currentNavLinks = headerNavLinks[locale as Locale] || headerNavLinks[DEFAULT_LOCALE];
 
   return (
     <header className={headerClass}>
@@ -39,7 +42,7 @@ const Header = () => {
       </Link>
       <div className="flex items-center space-x-4 leading-5 sm:-mr-6 sm:space-x-6">
         <div className="no-scrollbar hidden max-w-40 items-center gap-x-4 overflow-x-auto sm:flex md:max-w-72 lg:max-w-96">
-          {headerNavLinks
+          {currentNavLinks
             .filter((link) => link.href !== '/')
             .map((link) => {
               const isActive = pathname.includes(link.href);
