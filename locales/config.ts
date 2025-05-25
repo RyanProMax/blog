@@ -4,3 +4,5 @@ export enum Locale {
 }
 
 export const DEFAULT_LOCALE = Locale.EN;
+
+export const SupportedLanguages = Object.values(Locale);

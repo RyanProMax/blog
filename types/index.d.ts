@@ -1,7 +1,5 @@
-export type Locale = 'en' | 'zh';
-
 export interface ComponentProps {
-  params: Promise<{ locale: Locale }>;
+  params: Promise<{ locale: import('@/locales/config').Locale }>;
   children?: React.ReactNode;
 }
 

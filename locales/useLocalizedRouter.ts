@@ -1,10 +1,9 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
-import { Locale } from '@/types/index';
-import { DEFAULT_LOCALE } from '@/locales/config';
+import { DEFAULT_LOCALE, SupportedLanguages } from '@/locales/config';
 
-export const useLocalizedRouter = (locale: Locale) => {
+export const useLocalizedRouter = () => {
   const router = useRouter();
 
   useEffect(() => {
@@ -13,17 +12,21 @@ export const useLocalizedRouter = (locale: Locale) => {
     router.push = ((href: string, options) => {
       if (href.startsWith('http')) return originalPush(href, options);
 
-      const isDefault = locale === DEFAULT_LOCALE;
-      const prefixedHref = isDefault
+      const locale = SupportedLanguages.find((lang) => href.startsWith(`/${lang}`));
+      const prefixedHref = locale
         ? href
-        : `/${locale}${href.startsWith('/') ? href : '/' + href}`;
+        : `/${DEFAULT_LOCALE}${href.startsWith('/') ? href : '/' + href}`;
 
-      console.log('useLocalizedRouter push', { href });
+      console.log('useLocalizedRouter push', {
+        href,
+        prefixedHref,
+        locale,
+      });
       return originalPush(prefixedHref, options);
     }) as typeof router.push;
 
     return () => {
       router.push = originalPush;
     };
-  }, [locale, router]);
+  }, [router]);
 };

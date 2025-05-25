@@ -2,13 +2,10 @@
 import 'server-only';
 
 import { ComponentProps } from '@/types/index';
-import { Locale } from './config';
+import { Locale, SupportedLanguages } from './config';
 
-export const supportedLanguages = Object.values(Locale);
-export type Lang = (typeof supportedLanguages)[number];
-
-export async function getDictionary(lang: string) {
-  if (!supportedLanguages.includes(lang as Lang)) {
+export async function getDictionary(lang: Locale) {
+  if (!SupportedLanguages.includes(lang)) {
     throw new Error(`Unsupported locale: ${lang}`);
   }
   const dictionary = await import(`./${lang}.json`).then((module) => module.default);

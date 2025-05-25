@@ -9,6 +9,7 @@ import Link from './Link';
 import MobileNav from './MobileNav';
 import ThemeSwitch from './ThemeSwitch';
 import SearchButton from './SearchButton';
+import LocaleSwitcher from './LocaleSwitcher';
 
 import { LocaleProps } from '@/types/index';
 import { useLocalizedRouter } from '@/locales/useLocalizedRouter';
@@ -19,7 +20,7 @@ const Header = ({ locale }: LocaleProps) => {
     headerClass += ' sticky top-0 z-50';
   }
   const pathname = usePathname();
-  useLocalizedRouter(locale);
+  useLocalizedRouter();
 
   return (
     <header className={headerClass}>
@@ -58,6 +59,7 @@ const Header = ({ locale }: LocaleProps) => {
         </div>
         <SearchButton />
         <ThemeSwitch />
+        <LocaleSwitcher />
         <MobileNav />
       </div>
     </header>
