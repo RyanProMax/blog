@@ -1,8 +1,8 @@
 interface Project {
-  title: string
-  description: string
-  href?: string
-  imgSrc?: string
+  title: string;
+  description: string;
+  href?: string;
+  imgSrc?: string;
 }
 
 const projectsData: Project[] = [
@@ -21,6 +21,6 @@ const projectsData: Project[] = [
     imgSrc: '/static/images/electron-react-rspack.png',
     href: 'https://github.com/RyanProMax/electron-react-rspack',
   },
-]
+];
 
-export default projectsData
+export default projectsData;

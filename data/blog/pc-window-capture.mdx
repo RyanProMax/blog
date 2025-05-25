@@ -26,12 +26,12 @@ Windows 系统的图形 API（Graphics Application Programming Interface）是�
 
 7. [Vulkan](https://docs.vulkan.org/spec/latest/index.html)：Khronos Group 提供的低开销、跨平台图形/计算 API，面向极致性能和细粒度控制。
 
-
 ### 2. 游戏进程采集
 
 - **原理**：通过 DLL 注入到目标进程，拦截 DirectX/OpenGL/Vulkan 图形调用，获取 GPU 帧缓冲数据并共享给采集软件。
 
 - **优点**：
+
   - 高性能、低延迟：可直接拦截 GPU 渲染调用，无需往返 CPU，帧率与 GPU 渲染同步。
   - 专门针对游戏优化：支持全屏独占模式和硬件加速特性，兼容 DX9/10/11/12、OpenGL、Vulkan 主流游戏。
 
@@ -40,7 +40,6 @@ Windows 系统的图形 API（Graphics Application Programming Interface）是�
   - 安全与稳定风险：注入机制可能被杀软、反作弊系统拦截，甚至引发目标程序崩溃。
   - 维护成本：需不断适配新游戏引擎、API 版本与系统安全策略。
 
-
 ### 3. 窗口采集
 
 #### [WinRT 原生捕获](https://learn.microsoft.com/zh-cn/windows/uwp/audio-video-camera/screen-capture)
@@ -48,6 +47,7 @@ Windows 系统的图形 API（Graphics Application Programming Interface）是�
 - **原理**：基于 Windows.Graphics.Capture API，通过 DWM（桌面窗口管理器）与 DXGI Desktop Duplication，共享 GPU 纹理捕获特定窗口或屏幕。
 
 - **优点**：
+
   - 跨 GPU：即使 OBS 与目标窗口处于不同 GPU，仍能捕获。
   - 低延迟、高性能：直接共享 GPU 纹理，无需拷贝到 CPU，适合动态内容。
 
@@ -55,12 +55,12 @@ Windows 系统的图形 API（Graphics Application Programming Interface）是�
   - 仅支持 Win10 1803+ 以上系统：旧版 Windows 10 或 Win7 无法使用。
   - 部分 Vulkan/DX12 游戏兼容性不足：部分全屏专属渲染可能无法捕获。
 
-
 #### [GDI BitBlt](https://learn.microsoft.com/zh-cn/windows/win32/api/wingdi/nf-wingdi-bitblt)
 
 - **原理**：使用 GDI BitBlt 函数将源 DC 像素块拷贝到目标 DC，兼容旧版 Windows。
 
 - **优点**：
+
   - 兼容性好：Win7 及更早版本皆支持；无需额外权限或用户交互。
   - 实现简单：仅依赖 GDI 接口，易于移植。
 
@@ -73,13 +73,13 @@ Windows 系统的图形 API（Graphics Application Programming Interface）是�
 - **原理**：创建放大镜窗口，通过 MagSetWindowFilterList 筛选目标窗口，再从放大镜 DC 读取画面。
 
 - **优点**：
+
   - 可捕获后台或被遮挡窗口：绕过 Z 顺序限制，适合隐藏窗口录制。
   - 支持硬件加速内容：DWM 合成后仍可读取渲染结果。
 
 - **缺点**：
   - 帧率 & 性能开销高：放大镜合成与回读频繁，CPU/GPU 占用率高。
   - 依赖 Aero/DWM：在禁用 Aero 或使用第三方主题时可能失效。
-
 
 ### 4. 使用建议
 
