@@ -1,14 +1,14 @@
-import { JSX } from 'react'
-import { TimelineItem } from '@/components/TimelineItem'
+import { JSX } from 'react';
+import { TimelineItem } from '@/components/TimelineItem';
 
 export interface Experience {
-  org: string
-  url: string
-  logo: string
-  start: string
-  end: string
-  title: string
-  details?: () => JSX.Element
+  org: string;
+  url: string;
+  logo: string;
+  start: string;
+  end: string;
+  title: string;
+  details?: () => JSX.Element;
 }
 
 export const Timeline = () => {
@@ -20,8 +20,8 @@ export const Timeline = () => {
         </li>
       ))}
     </ul>
-  )
-}
+  );
+};
 export const EXPERIENCES: Experience[] = [
   {
     org: 'ByteDance',
@@ -65,7 +65,7 @@ export const EXPERIENCES: Experience[] = [
             , enhancing performance and stability.
           </li>
         </ul>
-      )
+      );
     },
   },
   {
@@ -92,4 +92,4 @@ export const EXPERIENCES: Experience[] = [
     end: 'Jun 2016',
     title: '🧑‍🎓BEng | Microelectronics',
   },
-]
+];

@@ -1,4 +1,4 @@
-import clsx from 'clsx'
+import clsx from 'clsx';
 import {
   ElectronIcon,
   ReactIcon,
@@ -7,7 +7,7 @@ import {
   PythonIcon,
   Git,
   NodeJS,
-} from '@/components/tech-icons'
+} from '@/components/tech-icons';
 
 export const DevIcons = {
   Electron: ElectronIcon,
@@ -17,7 +17,7 @@ export const DevIcons = {
   NodeJS: NodeJS,
   Python: PythonIcon,
   Git: Git,
-}
+};
 
 export const FamiliarTechStack = () => {
   return (
@@ -39,8 +39,8 @@ export const FamiliarTechStack = () => {
               <Icon />
             </div>
           </div>
-        )
+        );
       })}
     </div>
-  )
-}
+  );
+};

@@ -1,13 +1,13 @@
-import clsx from 'clsx'
-import { Minus, Plus } from 'lucide-react'
+import clsx from 'clsx';
+import { Minus, Plus } from 'lucide-react';
 
-import Link from '@/components/Link'
-import Image from '@/components/Image'
+import Link from '@/components/Link';
+import Image from '@/components/Image';
 
-import type { Experience } from './Experience'
+import type { Experience } from './Experience';
 
 export const TimelineItem = ({ exp, last }: { exp: Experience; last?: boolean }) => {
-  const { org, url, logo, start, end, title, details: Details } = exp
+  const { org, url, logo, start, end, title, details: Details } = exp;
 
   const MainContent = (
     <div className="flex flex-col">
@@ -24,7 +24,7 @@ export const TimelineItem = ({ exp, last }: { exp: Experience; last?: boolean })
         <span>{title}</span>
       </div>
     </div>
-  )
+  );
 
   return (
     <div
@@ -70,5 +70,5 @@ export const TimelineItem = ({ exp, last }: { exp: Experience; last?: boolean })
         MainContent
       )}
     </div>
-  )
-}
+  );
+};
