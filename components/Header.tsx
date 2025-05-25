@@ -52,7 +52,7 @@ const Header = () => {
                   href={link.href}
                   className={`hover:text-primary-500 dark:hover:text-primary-400 m-1 font-medium text-gray-900 dark:text-gray-100 ${
                     isActive ? 'text-primary-500 dark:text-primary-400' : ''
-                  }`}
+                  } ${locale === Locale.ZH ? 'font-normal' : 'font-medium'}`}
                 >
                   {link.title}
                 </Link>
