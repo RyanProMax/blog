@@ -11,9 +11,8 @@ export async function generateStaticParams() {
   return [{ locale: 'en' }, { locale: 'zh' }];
 }
 
-export default async function RootLayout({ children, params }: ComponentProps) {
+export default async function RootLayout({ children }: ComponentProps) {
   const basePath = process.env.BASE_PATH || '';
-  const { locale } = await params;
 
   return (
     <>
@@ -50,7 +49,7 @@ export default async function RootLayout({ children, params }: ComponentProps) {
           <SectionContainer>
             <div className="flex h-screen flex-col justify-between font-sans">
               <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
-                <Header locale={locale} />
+                <Header />
                 <main className="mb-auto">{children}</main>
               </SearchProvider>
               <Footer />

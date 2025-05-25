@@ -11,10 +11,9 @@ import ThemeSwitch from './ThemeSwitch';
 import SearchButton from './SearchButton';
 import LocaleSwitcher from './LocaleSwitcher';
 
-import { LocaleProps } from '@/types/index';
 import { useLocalizedRouter } from '@/locales/useLocalizedRouter';
 
-const Header = ({ locale }: LocaleProps) => {
+const Header = () => {
   let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10';
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50';
