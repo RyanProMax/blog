@@ -1,0 +1,63 @@
+import { Analytics, AnalyticsConfig } from 'pliny/analytics';
+import { SearchProvider, SearchConfig } from 'pliny/search';
+import Header from '@/components/Header';
+import SectionContainer from '@/components/SectionContainer';
+import Footer from '@/components/Footer';
+import siteMetadata from '@/data/siteMetadata';
+import { ThemeProviders } from './theme-providers';
+import { ComponentProps } from '@/types/index';
+
+export async function generateStaticParams() {
+  return [{ locale: 'en' }, { locale: 'zh' }];
+}
+
+export default async function RootLayout({ children, params }: ComponentProps) {
+  const basePath = process.env.BASE_PATH || '';
+  const { locale } = await params;
+
+  return (
+    <>
+      <link
+        rel="apple-touch-icon"
+        sizes="76x76"
+        href={`${basePath}/static/favicons/apple-touch-icon.png`}
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="32x32"
+        href={`${basePath}/static/favicons/favicon-32x32.png`}
+      />
+      <link
+        rel="icon"
+        type="image/png"
+        sizes="16x16"
+        href={`${basePath}/static/favicons/favicon-16x16.png`}
+      />
+      <link rel="manifest" href={`${basePath}/static/favicons/site.webmanifest`} />
+      <link
+        rel="mask-icon"
+        href={`${basePath}/static/favicons/safari-pinned-tab.svg`}
+        color="#5bbad5"
+      />
+      <meta name="msapplication-TileColor" content="#000000" />
+      <meta name="theme-color" media="(prefers-color-scheme: light)" content="#fff" />
+      <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#000" />
+      <link rel="alternate" type="application/rss+xml" href={`${basePath}/feed.xml`} />
+      <body className="bg-white pl-[calc(100vw-100%)] text-black antialiased dark:bg-gray-950 dark:text-white">
+        <ThemeProviders>
+          <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
+          <SectionContainer>
+            <div className="flex h-screen flex-col justify-between font-sans">
+              <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
+                <Header locale={locale} />
+                <main className="mb-auto">{children}</main>
+              </SearchProvider>
+              <Footer />
+            </div>
+          </SectionContainer>
+        </ThemeProviders>
+      </body>
+    </>
+  );
+}

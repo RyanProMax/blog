@@ -1,20 +1,23 @@
-'use client'
+'use client';
 
-import { usePathname } from 'next/navigation'
+import { usePathname } from 'next/navigation';
 
-import siteMetadata from '@/data/siteMetadata'
-import headerNavLinks from '@/data/headerNavLinks'
-import Logo from '@/data/logo.svg'
-import Link from './Link'
-import MobileNav from './MobileNav'
-import ThemeSwitch from './ThemeSwitch'
-import SearchButton from './SearchButton'
-const Header = () => {
-  let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10'
+import siteMetadata from '@/data/siteMetadata';
+import headerNavLinks from '@/data/headerNavLinks';
+import Logo from '@/data/logo.svg';
+import Link from './Link';
+import MobileNav from './MobileNav';
+import ThemeSwitch from './ThemeSwitch';
+import SearchButton from './SearchButton';
+
+import { Locale } from '@/types/index';
+
+const Header = ({ locale }: { locale: Locale }) => {
+  let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10';
   if (siteMetadata.stickyNav) {
-    headerClass += ' sticky top-0 z-50'
+    headerClass += ' sticky top-0 z-50';
   }
-  const pathname = usePathname()
+  const pathname = usePathname();
 
   return (
     <header className={headerClass}>
@@ -37,18 +40,18 @@ const Header = () => {
           {headerNavLinks
             .filter((link) => link.href !== '/')
             .map((link) => {
-              const isActive = pathname.startsWith(link.href)
+              const isActive = pathname.includes(link.href);
               return (
                 <Link
                   key={link.title}
-                  href={link.href}
+                  href={`/${locale}/${link.href}`}
                   className={`hover:text-primary-500 dark:hover:text-primary-400 m-1 font-medium text-gray-900 dark:text-gray-100 ${
                     isActive ? 'text-primary-500 dark:text-primary-400' : ''
                   }`}
                 >
                   {link.title}
                 </Link>
-              )
+              );
             })}
         </div>
         <SearchButton />
@@ -56,7 +59,7 @@ const Header = () => {
         <MobileNav />
       </div>
     </header>
-  )
-}
+  );
+};
 
-export default Header
+export default Header;

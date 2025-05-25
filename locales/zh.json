@@ -1,0 +1,19 @@
+{
+  "home": {
+    "latestPosts": "最新文章",
+    "welcomeMessage": "欢迎来到我的博客，在这里我分享一切热爱的事物。"
+  },
+  "blog": {
+    "allPosts": "所有文章",
+    "readMore": "阅读更多 →"
+  },
+  "projects": {
+    "title": "项目",
+    "intro": "以下是我构建的一些作品。"
+  },
+  "common": {
+    "tags": "标签",
+    "about": "关于",
+    "languageSwitch": "English"
+  }
+}

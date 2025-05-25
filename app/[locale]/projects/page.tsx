@@ -1,10 +1,10 @@
-import projectsData from '@/data/projectsData'
-import Card from '@/components/Card'
-import { genPageMetadata } from 'app/seo'
+import projectsData from '@/data/projectsData';
+import Card from '@/components/Card';
+import { genPageMetadata } from 'app/[locale]/seo';
 
-export const metadata = genPageMetadata({ title: 'Projects' })
+export const metadata = genPageMetadata({ title: 'Projects' });
 
-export default function Projects() {
+export default async function Projects({ params }) {
   return (
     <>
       <div className="divide-y divide-gray-200 dark:divide-gray-700">
@@ -31,5 +31,5 @@ export default function Projects() {
         </div>
       </div>
     </>
-  )
+  );
 }
