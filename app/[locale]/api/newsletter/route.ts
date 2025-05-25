@@ -9,3 +9,5 @@ const handler = NewsletterAPI({
 });
 
 export { handler as GET, handler as POST };
+
+export { generateStaticParams } from '@/locales/generateStaticParams';

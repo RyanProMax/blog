@@ -21,3 +21,5 @@ export default function sitemap(): MetadataRoute.Sitemap {
 
   return [...routes, ...blogRoutes];
 }
+
+export { generateStaticParams } from '@/locales/generateStaticParams';

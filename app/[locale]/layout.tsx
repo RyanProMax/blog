@@ -7,9 +7,7 @@ import siteMetadata from '@/data/siteMetadata';
 import { ThemeProviders } from './theme-providers';
 import { ComponentProps } from '@/types/index';
 
-export async function generateStaticParams() {
-  return [{ locale: 'en' }, { locale: 'zh' }];
-}
+export { generateStaticParams } from '@/locales/generateStaticParams';
 
 export default async function RootLayout({ children }: ComponentProps) {
   const basePath = process.env.BASE_PATH || '';
