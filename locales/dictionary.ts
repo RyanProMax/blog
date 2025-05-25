@@ -2,8 +2,9 @@
 import 'server-only';
 
 import { ComponentProps } from '@/types/index';
+import { Locale } from './config';
 
-export const supportedLanguages = ['en', 'zh'] as const;
+export const supportedLanguages = Object.values(Locale);
 export type Lang = (typeof supportedLanguages)[number];
 
 export async function getDictionary(lang: string) {

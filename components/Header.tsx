@@ -10,14 +10,16 @@ import MobileNav from './MobileNav';
 import ThemeSwitch from './ThemeSwitch';
 import SearchButton from './SearchButton';
 
-import { Locale } from '@/types/index';
+import { LocaleProps } from '@/types/index';
+import { useLocalizedRouter } from '@/locales/useLocalizedRouter';
 
-const Header = ({ locale }: { locale: Locale }) => {
+const Header = ({ locale }: LocaleProps) => {
   let headerClass = 'flex items-center w-full bg-white dark:bg-gray-950 justify-between py-10';
   if (siteMetadata.stickyNav) {
     headerClass += ' sticky top-0 z-50';
   }
   const pathname = usePathname();
+  useLocalizedRouter(locale);
 
   return (
     <header className={headerClass}>
@@ -44,7 +46,7 @@ const Header = ({ locale }: { locale: Locale }) => {
               return (
                 <Link
                   key={link.title}
-                  href={`/${locale}/${link.href}`}
+                  href={link.href}
                   className={`hover:text-primary-500 dark:hover:text-primary-400 m-1 font-medium text-gray-900 dark:text-gray-100 ${
                     isActive ? 'text-primary-500 dark:text-primary-400' : ''
                   }`}

@@ -1,5 +1,7 @@
 import { redirect } from 'next/navigation';
 
+import { DEFAULT_LOCALE } from '@/locales/config';
+
 export default function Home() {
-  redirect('/zh');
+  redirect(`/${DEFAULT_LOCALE}`);
 }
