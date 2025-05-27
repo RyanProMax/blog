@@ -1,7 +1,7 @@
 {
+  "electron": 1,
   "game-capture": 2,
   "live-stream": 3,
   "window-capture": 1,
-  "css": 1,
-  "electron": 1
+  "css": 1
 }
