@@ -10,18 +10,20 @@ import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const POSTS_PER_PAGE = 5;
 
-export async function generateMetadata(props: {
-  params: Promise<{ tag: string }>;
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ tag: string; locale: Locale }>;
 }): Promise<Metadata> {
-  const params = await props.params;
-  const tag = decodeURI(params.tag);
+  const { tag: _tag, locale } = await params;
+  const tag = decodeURI(_tag);
   return genPageMetadata({
     title: tag,
     description: `${siteMetadata.title} ${tag} tagged content`,
     alternates: {
       canonical: './',
       types: {
-        'application/rss+xml': `${siteMetadata.siteUrl}/tags/${tag}/feed.xml`,
+        'application/rss+xml': `${siteMetadata.siteUrl}/${locale}/tags/${tag}/feed.xml`,
       },
     },
   });

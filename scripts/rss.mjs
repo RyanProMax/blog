@@ -7,6 +7,13 @@ import tagData from '../app/tag-data.json' with { type: 'json' };
 import { allBlogs } from '../.contentlayer/generated/index.mjs';
 import { sortPosts } from 'pliny/utils/contentlayer.js';
 
+const Locale = {
+  EN: 'en',
+  ZH: 'zh',
+};
+
+const DEFAULT_LOCALE = Locale.EN;
+
 const outputFolder = process.env.EXPORT ? 'out' : 'public';
 
 const generateRssItem = (config, post) => `
@@ -37,19 +44,23 @@ const generateRss = (config, posts, page = 'feed.xml') => `
   </rss>
 `;
 
-async function generateRSS(config, allBlogs, page = 'feed.xml') {
-  const publishPosts = allBlogs.filter((post) => post.draft !== true);
+async function generateRSS(config, allBlogs, language = DEFAULT_LOCALE, page = 'feed.xml') {
+  const publishPosts = allBlogs.filter(
+    (post) => post.draft !== true && (post.language || DEFAULT_LOCALE) === language
+  );
   // RSS for blog post
   if (publishPosts.length > 0) {
     const rss = generateRss(config, sortPosts(publishPosts));
-    writeFileSync(`./${outputFolder}/${page}`, rss);
+    const rssPath = `./${outputFolder}/${language}`;
+    mkdirSync(rssPath, { recursive: true });
+    writeFileSync(path.join(rssPath, page), rss);
   }
 
   if (publishPosts.length > 0) {
-    for (const tag of Object.keys(tagData)) {
+    for (const tag of Object.keys(tagData[language])) {
       const filteredPosts = allBlogs.filter((post) => post.tags.map((t) => slug(t)).includes(tag));
       const rss = generateRss(config, filteredPosts, `tags/${tag}/${page}`);
-      const rssPath = path.join(outputFolder, 'tags', tag);
+      const rssPath = path.join(outputFolder, language, 'tags', tag);
       mkdirSync(rssPath, { recursive: true });
       writeFileSync(path.join(rssPath, page), rss);
     }
@@ -57,7 +68,8 @@ async function generateRSS(config, allBlogs, page = 'feed.xml') {
 }
 
 const rss = () => {
-  generateRSS(siteMetadata, allBlogs);
+  Object.values(Locale).forEach((locale) => generateRSS(siteMetadata, allBlogs, locale));
   console.log('RSS feed generated...');
 };
+
 export default rss;

@@ -5,6 +5,7 @@ import 'remark-github-blockquote-alert/alert.css';
 import { Space_Grotesk } from 'next/font/google';
 import siteMetadata from '@/data/siteMetadata';
 import { Metadata } from 'next';
+import { DEFAULT_LOCALE } from '@/locales/config';
 
 const space_grotesk = Space_Grotesk({
   subsets: ['latin'],
@@ -31,7 +32,7 @@ export const metadata: Metadata = {
   alternates: {
     canonical: './',
     types: {
-      'application/rss+xml': `${siteMetadata.siteUrl}/feed.xml`,
+      'application/rss+xml': `${siteMetadata.siteUrl}/${DEFAULT_LOCALE}/feed.xml`,
     },
   },
   robots: {
