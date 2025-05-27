@@ -95,11 +95,27 @@ function createSearchIndex(allBlogs) {
     siteMetadata?.search?.provider === 'kbar' &&
     siteMetadata.search.kbarConfig.searchDocumentsPath
   ) {
-    writeFileSync(
-      `public/${path.basename(siteMetadata.search.kbarConfig.searchDocumentsPath)}`,
-      JSON.stringify(allCoreContent(sortPosts(allBlogs)))
-    );
-    console.log('Local search index generated...');
+    // 为每种语言生成独立的搜索索引
+    const blogsByLanguage = {
+      [Locale.EN]: [],
+      [Locale.ZH]: [],
+    };
+
+    // 按语言分组博客文章
+    allBlogs.forEach((blog) => {
+      const language = blog.language || DEFAULT_LOCALE;
+      if (blogsByLanguage[language]) {
+        blogsByLanguage[language].push(blog);
+      }
+    });
+
+    // 为每种语言生成搜索索引文件
+    Object.entries(blogsByLanguage).forEach(([language, blogs]) => {
+      const searchData = allCoreContent(sortPosts(blogs));
+      const fileName = language === DEFAULT_LOCALE ? 'search.json' : `search-${language}.json`;
+      writeFileSync(`public/${fileName}`, JSON.stringify(searchData));
+      console.log(`Search index for ${language} generated: ${fileName}`);
+    });
   }
 }
 

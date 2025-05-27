@@ -19,6 +19,20 @@ export default async function RootLayout({
   const basePath = process.env.BASE_PATH || '';
   const { locale = DEFAULT_LOCALE } = await params;
 
+  // 为每个语言版本创建独立的搜索配置
+  const searchConfig = {
+    ...siteMetadata.search,
+    ...(siteMetadata.search?.provider === 'kbar' && {
+      kbarConfig: {
+        ...siteMetadata.search?.kbarConfig,
+        searchDocumentsPath:
+          locale === DEFAULT_LOCALE
+            ? `${basePath}/search.json`
+            : `${basePath}/search-${locale}.json`,
+      },
+    }),
+  } as SearchConfig;
+
   return (
     <>
       <link
@@ -53,7 +67,7 @@ export default async function RootLayout({
           <Analytics analyticsConfig={siteMetadata.analytics as AnalyticsConfig} />
           <SectionContainer>
             <div className="flex h-screen flex-col justify-between font-sans">
-              <SearchProvider searchConfig={siteMetadata.search as SearchConfig}>
+              <SearchProvider searchConfig={searchConfig}>
                 <Header />
                 <main className="mb-auto">{children}</main>
               </SearchProvider>
