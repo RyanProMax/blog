@@ -1,89 +1,95 @@
 ---
-title: 游戏采集 & 窗口采集
+title: Game Capture & Window Capture
 date: '2024-09-26'
 tags: ['Game Capture', 'Window Capture', 'Live Stream']
 draft: false
-summary: 游戏采集跟窗口采集的原理是什么，两者又有什么区别？一篇文章告诉你。
+summary: What are the principles behind game capture and window capture? What’s the difference between the two?
 language: en
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-### 1.1 图形 API
+## 1.1 Graphics APIs
 
-Windows 系统的图形 API（Graphics Application Programming Interface）是软件接口，用于开发者创建和管理图形内容。相当于桥接层，在应用程序与底层硬件之间提供了一层抽象，开发者无需操作硬件接口即可进行图形绘制。
+Windows graphics APIs (Graphics Application Programming Interfaces) are software interfaces that allow developers to create and manage graphical content. These APIs serve as an abstraction layer between applications and underlying hardware, enabling rendering without directly manipulating hardware resources.
 
-1. [GDI (Graphics Device Interface)](https://learn.microsoft.com/en-us/windows/win32/gdi/windows-gdi)：Windows 最基础的 2D 绘图接口，依赖`CPU`渲染，性能有限，主要供传统桌面应用使用。
+1. [GDI (Graphics Device Interface)](https://learn.microsoft.com/en-us/windows/win32/gdi/windows-gdi): The most basic 2D drawing API on Windows. It relies on the `CPU` for rendering, has limited performance, and is mainly used in legacy desktop applications.
 
-2. [GDI+](https://learn.microsoft.com/en-us/windows/win32/gdiplus/-gdiplus-gdi-start)：GDI 的增强版，支持抗锯齿、透明度、复杂几何与高级文本渲染，仍以软件为主。
+2. [GDI+](https://learn.microsoft.com/en-us/windows/win32/gdiplus/-gdiplus-gdi-start): An enhanced version of GDI, supporting anti-aliasing, transparency, complex geometries, and advanced text rendering. Still primarily software-based.
 
-3. [Direct2D](https://learn.microsoft.com/en-us/windows/win32/direct2d/direct2d-portal)：面向 2D 的硬件加速 API，性能优于 GDI/GDI+，适合高性能绘图场景。
+3. [Direct2D](https://learn.microsoft.com/en-us/windows/win32/direct2d/direct2d-portal): A hardware-accelerated 2D API with significantly better performance than GDI/GDI+, suitable for high-performance drawing.
 
-4. [Direct3D](https://learn.microsoft.com/en-us/windows/win32/direct3d12/direct3d-12-graphics)：DirectX 3D 渲染接口，广泛应用于游戏与高性能多媒体。
+4. [Direct3D](https://learn.microsoft.com/en-us/windows/win32/direct3d12/direct3d-12-graphics): Part of DirectX, a 3D rendering interface widely used in games and high-performance multimedia.
 
-5. [OpenGL](https://www.opengl.org/Documentation/Specs.html)：跨平台的 2D/3D API，在 Windows 上通过驱动支持，多用于专业图形与部分游戏。
+5. [OpenGL](https://www.opengl.org/Documentation/Specs.html): A cross-platform 2D/3D API, supported via drivers on Windows. Common in professional graphics and some games.
 
-6. [WPF (Windows Presentation Foundation)](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/?view=netdesktop-6.0)：.NET 框架基于矢量的 UI 子系统，内置动画、样式与硬件加速，适合快速构建现代桌面应用。
+6. [WPF (Windows Presentation Foundation)](https://learn.microsoft.com/en-us/dotnet/desktop/wpf/?view=netdesktop-6.0): A vector-based UI system in the .NET framework, supporting animation, styling, and hardware acceleration. Ideal for modern desktop applications.
 
-7. [Vulkan](https://docs.vulkan.org/spec/latest/index.html)：Khronos Group 提供的低开销、跨平台图形/计算 API，面向极致性能和细粒度控制。
+7. [Vulkan](https://docs.vulkan.org/spec/latest/index.html): A low-overhead, cross-platform graphics and compute API by the Khronos Group, offering fine-grained control and extreme performance.
 
-### 2. 游戏进程采集
+## 2. Game Process Capture
 
-- **原理**：通过 DLL 注入到目标进程，拦截 DirectX/OpenGL/Vulkan 图形调用，获取 GPU 帧缓冲数据并共享给采集软件。
+- **Mechanism**: Injects a DLL into the target process to intercept DirectX/OpenGL/Vulkan rendering calls and fetch GPU framebuffer data for sharing with the capture software.
 
-- **优点**：
+- **Advantages**:
 
-  - 高性能、低延迟：可直接拦截 GPU 渲染调用，无需往返 CPU，帧率与 GPU 渲染同步。
-  - 专门针对游戏优化：支持全屏独占模式和硬件加速特性，兼容 DX9/10/11/12、OpenGL、Vulkan 主流游戏。
+  - High performance & low latency: Directly intercepts GPU rendering calls without CPU round-trips; frame rate syncs with GPU rendering.
+  - Game-optimized: Fully supports fullscreen exclusive mode and hardware acceleration; compatible with DX9/10/11/12, OpenGL, Vulkan-based games.
 
-- **缺点**：
-  - 兼容性差：对普通桌面应用（GDI/GDI+ 渲染）无法工作，对 Electron（Chromium/Skia 多进程沙箱）也难以插入钩子。
-  - 安全与稳定风险：注入机制可能被杀软、反作弊系统拦截，甚至引发目标程序崩溃。
-  - 维护成本：需不断适配新游戏引擎、API 版本与系统安全策略。
+- **Disadvantages**:
 
-### 3. 窗口采集
+  - Poor compatibility: Doesn’t work with typical desktop applications (e.g., GDI/GDI+ rendering); hard to hook into Electron (Chromium/Skia with multi-process sandboxing).
+  - Security and stability risks: Injection mechanisms may be blocked by antivirus or anti-cheat systems and can crash the target application.
+  - High maintenance: Requires constant adaptation to new game engines, API versions, and OS security policies.
 
-#### [WinRT 原生捕获](https://learn.microsoft.com/zh-cn/windows/uwp/audio-video-camera/screen-capture)
+## 3. Window Capture
 
-- **原理**：基于 Windows.Graphics.Capture API，通过 DWM（桌面窗口管理器）与 DXGI Desktop Duplication，共享 GPU 纹理捕获特定窗口或屏幕。
+### [WinRT Screen capture](https://learn.microsoft.com/en-us/windows/uwp/audio-video-camera/screen-capture)
 
-- **优点**：
+- **Mechanism**: Uses the Windows.Graphics.Capture API to share GPU textures of a specific window or screen via DWM (Desktop Window Manager) and DXGI Desktop Duplication.
 
-  - 跨 GPU：即使 OBS 与目标窗口处于不同 GPU，仍能捕获。
-  - 低延迟、高性能：直接共享 GPU 纹理，无需拷贝到 CPU，适合动态内容。
+- **Advantages**:
 
-- **缺点**：
-  - 仅支持 Win10 1803+ 以上系统：旧版 Windows 10 或 Win7 无法使用。
-  - 部分 Vulkan/DX12 游戏兼容性不足：部分全屏专属渲染可能无法捕获。
+  - Cross-GPU: Can capture even if OBS and the target window are on different GPUs.
+  - Low latency & high performance: Shares GPU textures directly without copying to the CPU, ideal for dynamic content.
 
-#### [GDI BitBlt](https://learn.microsoft.com/zh-cn/windows/win32/api/wingdi/nf-wingdi-bitblt)
+- **Disadvantages**:
 
-- **原理**：使用 GDI BitBlt 函数将源 DC 像素块拷贝到目标 DC，兼容旧版 Windows。
+  - Requires Windows 10 1803+: Not available on older Windows 10 versions or Windows 7.
 
-- **优点**：
+  - Limited Vulkan/DX12 compatibility: Some exclusive fullscreen render paths may not be capturable.
 
-  - 兼容性好：Win7 及更早版本皆支持；无需额外权限或用户交互。
-  - 实现简单：仅依赖 GDI 接口，易于移植。
 
-- **缺点**：
-  - 无法捕获硬件加速窗口：GPU 绘制绕过 GDI 管道，导致黑屏或花屏。
-  - 高 CPU 开销、延迟大：需将 GPU 数据同步拷贝到 CPU，帧率 & 性能受限。
+### [GDI BitBlt](https://learn.microsoft.com/zh-cn/windows/win32/api/wingdi/nf-wingdi-bitblt)
 
-#### [Magnification API](https://learn.microsoft.com/zh-cn/windows/win32/winauto/magapi/entry-magapi-sdk)
+- **Mechanism**: Uses the GDI BitBlt function to copy pixel blocks from a source DC to a destination DC. Compatible with older Windows versions.
 
-- **原理**：创建放大镜窗口，通过 MagSetWindowFilterList 筛选目标窗口，再从放大镜 DC 读取画面。
+- **Advantages**:
 
-- **优点**：
+  - Excellent compatibility: Works on Windows 7 and earlier; no special permissions or user interaction required.
+  - Simple implementation: Depends solely on GDI, easy to port.
 
-  - 可捕获后台或被遮挡窗口：绕过 Z 顺序限制，适合隐藏窗口录制。
-  - 支持硬件加速内容：DWM 合成后仍可读取渲染结果。
+- **Disadvantages**:
 
-- **缺点**：
-  - 帧率 & 性能开销高：放大镜合成与回读频繁，CPU/GPU 占用率高。
-  - 依赖 Aero/DWM：在禁用 Aero 或使用第三方主题时可能失效。
+  - Cannot capture hardware-accelerated windows: GPU-drawn content bypasses the GDI pipeline, resulting in black or corrupted captures.
+  - High CPU overhead & latency: Requires GPU-to-CPU data copying; performance and frame rate are constrained.
 
-### 4. 使用建议
+### [Magnification API](https://learn.microsoft.com/zh-cn/windows/win32/winauto/magapi/entry-magapi-sdk)
 
-1. 高性能游戏场景，优先选用`游戏进程采集`，其次 `WGC`，二者性能相差不大；WGC 无注入，安全性更好。
+- **Mechanism**: Creates a magnifier window and uses MagSetWindowFilterList to filter target windows, then reads the image from the magnifier's DC.
 
-2. 若有支持老系统和兼容性的需求，再考虑使用 `BitBlt` 与 `Magnification API`。
+- **Advantages**:
+
+  - Can capture background or occluded windows: Bypasses Z-order restrictions; ideal for capturing hidden windows.
+  - Supports hardware-accelerated content: Captures rendered results after DWM composition.
+
+- **Disadvantages**:
+
+  - High performance cost: Frequent composition and readback from the magnifier cause high CPU/GPU usage.
+  - Depends on Aero/DWM: May not work if Aero is disabled or when third-party themes are used.
+
+## 4. Recommendations
+
+1. For high-performance gaming scenarios, `Game Process Capture` is preferred, followed by `WGC` (Windows Graphics Capture). Both offer comparable performance, but WGC is safer since it doesn’t use injection.
+
+2. If compatibility with older systems is needed, consider using `BitBlt` and `Magnification API` as fallback options.

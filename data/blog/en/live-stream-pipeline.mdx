@@ -1,94 +1,131 @@
 ---
-title: 直播流链路介绍
+title: Introduction to Live Streaming Pipeline
 date: '2024-04-07'
 tags: ['Live Stream']
 draft: false
-summary: 直播画面是如何从主播传输给观众的？传输延时有多少，画面清晰度又是什么决定的？
+summary: How is a live stream transmitted from the broadcaster to the audience? What determines transmission latency and image quality?
 language: en
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-### 1. 推流与分发原理
+## 1. Streaming and Distribution Principles
 
-直播链路通常是从采集端通过`推流协议`将音视频送入服务器/CDN，再在CDN端转码并分发多协议流。一般主播端采用`RTMP`协议推流到直播服务器（或云直播服务），服务器可对流做多码率`转码`并打包成不同协议格式（如 `FLV`、`HLS`、`HTTP-FLV`、`LLS` 等）供观众拉流观看。
+A typical live streaming pipeline starts from the capture side, where audio and video are pushed via a `streaming protocol` to a server or CDN. The CDN then transcodes and repackages the stream into multiple protocol formats (e.g., FLV, HLS, HTTP-FLV, LLS) for viewers to pull and play.
 
-新兴协议（如 SRT、RIST、E‑RTMP）与标准协议（RTMP、HLS、HTTP‑FLV、RTC）各有侧重：有的追求**极低延时**，有的强调**兼容与大规模分发**。
+Modern protocols (like SRT, RIST, E‑RTMP) and standard ones (RTMP, HLS, HTTP‑FLV, RTC) serve different purposes: some prioritize **ultra-low latency**, while others focus on **compatibility and large-scale delivery**.
 
-- **采集与推流**：主播端采集后常用 RTMP 推流，也可选用 SRT、RIST、E‑RTMP 等现代协议，网络上行情况会影响推流延迟和稳定性。
+- **Capture and Push**: The broadcaster typically uses RTMP to push streams, but SRT, RIST, or E‑RTMP can also be used. Upstream network quality affects push latency and stability.
 
-  - **SRT**（Secure Reliable Transport）：基于 UDP + ARQ 重传，支持 AES 加密和防火墙穿透，延迟可控 ≈120 ms，适合跨网段高可靠性传输。
+  - **SRT** (Secure Reliable Transport): Based on UDP + ARQ retransmission; supports AES encryption and firewall traversal; typical latency ≈120 ms. Ideal for cross-network, high-reliability transmission.
 
-  - **RIST**（Reliable Internet Stream Transport）：基于 RTP/UDP + NACK，开放规范，主打多厂商互通与低延时。
+  - **RIST** (Reliable Internet Stream Transport): Based on RTP/UDP + NACK; open standard focused on multi-vendor compatibility and low latency.
 
-  - **E‑RTMP**（Enhanced RTMP）：在 RTMP 基础上新增对 AV1、HEVC、纳秒级时间戳、多音轨等现代特性的支持。
+  - **E‑RTMP** (Enhanced RTMP): Extends RTMP with support for modern features such as AV1/HEVC, nanosecond timestamps, and multi-track audio.
 
-- **服务器/转码/CDN**：负责分发和协议转换。不同协议处理方式不同：如 HLS 需要定期切片生成索引，产生批量延迟；RTMP 则逐帧分发，延迟较低。
 
-  - 接收协议流 → 多码率转码（H.264、H.265、AV1 等）。
+- **Server / Transcoding / CDN**: Handles stream distribution and protocol conversion. Each protocol has a different processing model: HLS requires segmenting and indexing (introducing batch latency); RTMP transmits frame by frame (lower latency).
 
-  - 按需输出协议：FLV/HTTP‑FLV（秒级延迟）、HLS/LL‑HLS（跨平台分发）、MPEG‑DASH/LL‑DASH、WebRTC（点对点交互）。
+  - Receive protocol stream → Transcode into multiple bitrates (H.264, H.265, AV1, etc.)
 
-  - CDN 负责缓存切片 (.ts/.m4s)、分发索引 (.m3u8/.mpd) 及边缘协议转发。
+  - Output formats on demand: FLV/HTTP‑FLV (second-level latency), HLS/LL-HLS (cross-platform), MPEG‑DASH/LL‑DASH, WebRTC (real-time interaction)
 
-- **消费端**：播放器下载流并解码显示，缓冲区大小和解码延迟决定最终延时。播放器通常会缓存数帧或数秒流以应对网络波动，从而引入额外延迟。
+  - CDN handles segment caching (.ts/.m4s), index distribution (.m3u8/.mpd), and edge protocol relay.
 
-### 2. 延迟组成与 GOP 缓存策略
 
-直播总延迟由三部分构成：
+- **Playback Client**: The player downloads, decodes, and renders the stream. Buffer size and decoding delay determine final latency. Players often buffer a few frames or seconds to smooth network fluctuations, which introduces extra delay.
 
-1. **生产端**：采集（10–30 ms）、编码（50–200 ms）、前处理
 
-2. **网络/CDN**：传输（≳网络RTT）、切片与分发（HLS 切片长度×列表长度）
+## 2. Latency Composition and GOP Buffer Strategy
 
-3. **消费端**：播放器缓冲（1–3 s）、解码渲染、后处理
+Total live latency is made up of three parts:
 
-`GOP`值（Group of Pictures）表示关键帧的间隔（即两个关键帧之间的帧数），也就是两个IDR帧之间的距离，一个帧组的最大帧数。
+1. **Production Side**: Capture (10–30 ms), encoding (50–200 ms), preprocessing
 
-消费端一般会设置缓冲时间（如1-2s），以平滑抖动。为了平衡首帧启动速度和整体延迟，常用GOP缓存策略：
+2. **Network/CDN**: Transmission (≳ network RTT), segmentation & distribution (HLS segment duration × playlist length)
 
-- **上限优先**（低延迟）：不缓存过往I帧，需等待下一个I帧才开始解码播放（延时最小）。
-- **下限优先**（抗抖动）：缓存完整 GOP，拉流后立即使用缓存的I帧开始播放（秒开），但延迟增加 1 GOP 长度。
+3. **Playback Side**: Player buffer (1–3 s), decoding, rendering, post-processing
 
-以 [SRS](https://github.com/ossrs/srs) 为例，其 gop_cache 配置可开关此策略：gop_cache off 实现“上限优先”低延迟播放，gop_cache on 则启用缓存快速启动。根据场景需求，可在极低延迟和快速首屏间切换。例如遇弱网不宜黑屏时可启用缓存，下行稳定时可关闭以压缩延迟。
+The `GOP` (Group of Pictures) value defines the number of frames between keyframes (IDR), i.e., the maximum frame count in a group.
 
-### 3. 各直播协议原理与场景
+Clients usually buffer 1–2s of content to mitigate jitter. To balance startup speed and latency, two GOP buffer strategies are common:
 
-- `RTMP`（Real-Time Messaging Protocol）：Adobe/Flash 制定，采用长连接 TCP 传输 FLV 数据包。优点是实时性好（典型延迟1–3秒），几乎所有采集设备和老旧播放器都支持，对防火墙穿透友好（常用80端口）。缺点是需插件或专用播放器（现代浏览器不原生支持 Flash）、TCP 特性可能在弱网时造成累积延迟。适用于互动直播、PC 端直播等对延迟要求较高、兼容性要求一般的场景。
+- **Upper-Bound Priority** (Low Latency): No historical I-frame buffering; player waits for the next I-frame to begin playback (minimal delay).
 
-- `HTTP-FLV`：即通过 HTTP 持续请求 FLV 流。原理与 RTMP 相似，将音视频打包为 FLV Tag，通过 HTTP 分包传输。优点包括可以使用标准 HTTP（避免防火墙限制）、支持 HTTPS 加密、良好的移动端兼容性；延迟较RTMP略高但通常也在1-3秒。缺点是仍基于 TCP 连接，观众端需要使用支持 HTTP-FLV 的播放器或 JS 引擎（浏览器不可原生播放）。
+- **Lower-Bound Priority** (Anti-Jitter): Buffers complete GOPs and starts playback immediately using the cached I-frame ("instant start"), at the cost of increased delay (≈1 GOP length).
 
-- `HLS`（HTTP Live Streaming）：苹果公司提出的基于 HTTP 的分段流媒体协议。服务端将视频切成多个 TS 或 CMAF 分片，并生成 M3U8 索引列表；播放器按列表顺序通过 HTTP 拉取并播放。HLS 优点是完全基于 HTTP，可穿透防火墙、方便通过 CDN 缓存分发、客户端实现简单；缺点是固有的“块传输”延迟，通常需要缓冲多个分片（标准播放时延一般在5–15秒以上），不适合对延迟非常敏感的场景。现有低延迟 HLS (LL-HLS) 通过更短分片和部分加载技术可将延迟降至3–5秒。
+Using [SRS](https://github.com/ossrs/srs) as an example, the gop_cache config toggles this strategy:
 
-- `LLS`（Low-Latency Streaming）：通常指基于专用 CDN/协议的极低延迟方案，常采用精细分片（CMAF/FLV 结合）和推送技术来实现近乎无延迟。优点是延时几乎达到实时，支持大并发；缺点是厂商专有，需要使用对应 SDK/播放器，且部署成本较高。
+- gop_cache off: enables upper-bound priority (low-latency playback),
+- gop_cache on: allows fast startup using buffered GOPs.
 
-- `RTC`（WebRTC）：基于 UDP 的实时通讯协议，采用 SRTP 等传输媒体，交互延时可低于500ms。优点是点对点通信实时性极高（适用于视频会议、互动直播连麦等场景）；缺点是需要复杂的信令和 NAT 穿透，原生不易做大规模广播（需SFU/MCU），兼容性依赖浏览器和硬件。RTC 适合1对1或少人数低延迟场景，不适用于标准CDN分发。
+Toggle based on scenario—enable buffering to avoid black screens in poor networks, or disable to reduce delay when downstream is stable.
 
-| 协议     | 封装格式 | 传输协议  | 典型延迟 | 优点                          | 缺点                                  | 使用场景          |
-| -------- | -------- | --------- | -------- | ----------------------------- | ------------------------------------- | ----------------- |
-| RTMP     | FLV      | TCP       | 1–3s     | 延迟低、支持CDN分发、兼容性好 | 需专用播放器，弱网时TCP积累延迟       | PC 直播、互动直播 |
-| HTTP-FLV | FLV      | TCP(HTTP) | 1–3s     | 延迟低、HTTP友好、移动端友好  | 需专用播放器(浏览器无原生支持)        | 网页端直播        |
-| HLS      | TS/CMAF  | TCP(HTTP) | 5-15s    | 兼容性极佳，大规模            | 高延迟，实时性差                      | 点播与直播        |
-| LLS      | CMAF     | TCP(HTTP) | \<0.5s   | 极低延迟、端到端同步          | 厂商专有，需要专用SDK/播放器          | 大型直播，低延迟  |
-| RTC      | RTP      | UDP/SRTP  | \<0.5s   | 点对点实时                    | 扩展性差，难CDN分发，不适合大规模广播 | 连麦、会议        |
 
-### 4. 转码档位策略
+## 3. Protocol Mechanisms and Use Cases
 
-**编码器选择**：
+- `RTMP` (Real-Time Messaging Protocol): Developed by Adobe/Flash, uses long-lived TCP connections to transmit FLV packets.
+Pros: Low latency (1–3s), widely supported by capture devices and legacy players, firewall-friendly (often via port 80).
+Cons: Requires plugins or dedicated players (modern browsers don’t support Flash), TCP may cause accumulated delay under poor network.
+Use Cases: Interactive streams, PC-based streaming.
 
-- H.264：最广兼容，适合SD/HD。
+- `HTTP-FLV`: Streams FLV via continuous HTTP requests. Works similarly to RTMP—packages audio/video into FLV Tags and transmits over HTTP.
 
-- H.265：高压缩率（同等画质下码率约减半），适合4K/8K，需客户端支持。
+  - Pros: Uses standard HTTP (bypasses firewall), supports HTTPS, mobile-friendly.
 
-对于网络不佳的用户，还常提供`窄带高清`档位，即在保证分辨率的同时进一步压低码率。
+  - Cons: Still based on TCP, requires a player or JS engine with HTTP-FLV support (not playable natively in browsers).
 
-以下为常用转码档位关系，具体以厂商实际策略为准：
+  - Use Cases: Web-based live streaming.
 
-| 档位   | 分辨率    | 帧率  | H.264码率 | H.265码率 | 说明                   |
-| ------ | --------- | ----- | --------- | --------- | ---------------------- |
-| origin | -         | -     | -         | -         | 源流                   |
-| uhd    | 3840×2160 | 60fps | 6Mbps     | 3Mbps     | 蓝光4K                 |
-| hd     | 1920×1080 | 45fps | 4Mbps     | 2Mbps     | 超清1080P              |
-| zuhd   | 1920×1080 | 45fps | 2Mbps     | 1Mbps     | 低码率超清（窄带高清） |
-| sd     | 1280×720  | 30fps | 2Mbps     | 1Mbps     | 高清720P               |
-| ld     | 960x540   | 25fps | 1Mbps     | 500kbps   | 标清540P               |
+- `HLS` (HTTP Live Streaming): Apple’s segmented streaming protocol over HTTP. Server slices video into TS or CMAF segments and generates an M3U8 playlist.
+
+  - Pros: Fully HTTP-based, firewall-traversable, CDN-friendly, simple client implementation.
+
+  - Cons: Intrinsically high latency due to segment-based delivery; standard delay typically 5–15s. LL-HLS reduces latency to 3–5s via shorter segments and partial loading.
+
+  - Use Cases: Video-on-demand and general-purpose live streaming.
+
+- `LLS` (Low-Latency Streaming): Refers to proprietary low-latency solutions using fine-grained segments (e.g., CMAF/FLV hybrid) and push-based delivery.
+
+  - Pros: Sub-second latency, real-time delivery at scale.
+
+  - Cons: Vendor-locked, requires specific SDKs/players, higher deployment cost.
+
+  - Use Cases: Large-scale live events requiring low latency.
+
+- `RTC` (WebRTC): UDP-based real-time communication protocol using SRTP.
+
+  - Pros: Ultra-low point-to-point latency (\<500ms), ideal for video conferencing or co-hosting.
+
+  - Cons: Requires complex signaling and NAT traversal; not natively scalable (requires SFU/MCU); browser and hardware compatibility varies.
+
+  - Use Cases: 1-on-1 or small group low-latency interactions; not suitable for CDN broadcasting.
+
+| Protocol |Container | Transport | Latency  | Advantages                                   | Disadvantages                                      | Use Cases                     |
+| -------- | -------- | --------- | -------- | -------------------------------------------- | ---------------------------------------------------| ----------------------------- |
+| RTMP     | FLV      | TCP       | 1–3s     | Low latency, CDN-friendly, widely compatible | Needs special player, TCP delay under poor network | PC streaming, interaction     |
+| HTTP-FLV | FLV      | TCP(HTTP) | 1–3s     | HTTP-compatible, mobile-friendly             | Not supported by default in browsers               | Web-based live streaming      |
+| HLS      | TS/CMAF  | TCP(HTTP) | 5-15s    | Great compatibility, scalable                | High latency, poor real-time performance           | VOD and general live          |
+| LLS      | CMAF     | TCP(HTTP) | \<0.5s   | Ultra-low latency, end-to-end sync	          | Vendor-locked, requires specific SDK/player        | High-concurrency, low-latency |
+| RTC      | RTP      | UDP/SRTP  | \<0.5s   | Real-time, P2P	                              | Poor scalability, hard to distribute via CDN       | Co-hosting, conferencing      |
+
+## 4. Transcoding Profiles
+
+**Encoder Options**:
+
+- H.264: Most widely compatible, suitable for SD/HD.
+
+- H.265: Higher compression (≈50% bitrate reduction at same quality), suitable for 4K/8K, but requires client support.
+
+For users on poor networks, a `Narrowband HD profile` may be offered—maintains resolution while reducing bitrate.
+
+Example transcoding profiles (actual strategy may vary by vendor):
+
+|Profile |Resolution | FPS   |H.264Bitrate |H.265Bitrate  | Description                     |
+| ------ | --------- | ----- | ----------- | ------------ | ------------------------------- |
+| origin | -         | -     | -           | -            | Original stream                 |
+| uhd    | 3840×2160 | 60fps | 6Mbps       | 3Mbps        | Ultra HD 4K                     |
+| hd     | 1920×1080 | 45fps | 4Mbps       | 2Mbps        | Full HD 1080p                   |
+| zuhd   | 1920×1080 | 45fps | 2Mbps       | 1Mbps        | Narrowband HD (low-bitrate FHD) |
+| sd     | 1280×720  | 30fps | 2Mbps       | 1Mbps        | HD 720p                         |
+| ld     | 960x540   | 25fps | 1Mbps       | 500kbps      | SD 540p                         |

@@ -1,9 +1,9 @@
 ---
-title: 什么是层叠上下文
+title: What Is a Stacking Context?
 date: '2021-06-15'
 tags: ['CSS']
 draft: false
-summary: 彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index。
+summary: Fully understand CSS stacking contexts, stacking levels, stacking order, and z-index.
 language: en
 ---
 
@@ -13,45 +13,47 @@ language: en
 
 ![stack-context](/static/images/stack-context/02.png)
 
-### 1. 什么是层叠上下文？
+## 1. What Is a Stacking Context?
 
-层叠上下文是浏览器绘制页面时构建的一个三维环境，元素根据 z-index、定位方式、层级规则决定谁在上、谁在下。根元素（`<html>`）天然是一个层叠上下文，特定条件下的元素也会创建新的层叠上下文，例如：
+A stacking context is a three-dimensional rendering structure used by the browser to determine which elements appear in front of or behind others. Elements form stacking contexts based on their z-index, positioning, and specific CSS properties. The root element (`<html>`) naturally creates a stacking context, and certain conditions can trigger new ones:
 
-- position 为 absolute 或 relative 且设置了 z-index
-- 使用了 opacity < 1、transform、filter、will-change 等属性
-- mix-blend-mode 被设置时
+- An element with position: absolute or relative and a specified z-index
+- Use of properties like opacity < 1, transform, filter, or will-change
+- When mix-blend-mode is set
 
-_一个新的层叠上下文将阻止其内部的子元素参与外层的 z-index 层级排序。_
+_A new stacking context isolates its child elements from participating in the parent stacking order._
 
-### 2. 渲染层与合成层
 
-浏览器渲染页面主要分为：
+## 2. Rendering Layers vs. Compositing Layers
 
-1. 布局（Layout）
+When rendering a page, browsers generally follow three phases:
 
-2. 绘制（Painting）
+1. Layout
 
-3. 合成（Compositing）
+2. Painting
 
-合成阶段会将页面分成多个`合成层`（compositing layers），并在 GPU 中进行独立渲染。这些合成层来源于层叠上下文，但并不一一对应。
+3. Compositing
 
-默认情况下，多个层叠上下文会共用一个渲染层（也称`合成层`），即`根层`。这是浏览器的一种性能优化策略，`层压缩`（Layer Squashing）：尽可能少创建合成层，避免性能浪费。
+In the compositing phase, the browser may divide the page into multiple `compositing layers`, which are rendered independently via the GPU. These compositing layers are often derived from stacking contexts, but not always one-to-one.
 
-### 3. 什么时候会强制创建新合成层？
+By default, multiple stacking contexts may share a single rendering layer (also called a `compositing layer`)—usually `the root layer`. This is part of a browser performance optimization technique called `layer squashing`: minimizing the number of layers to avoid resource overhead.
 
-当元素设置了某些会触发 GPU 加速的属性（如 transform、will-change、video 元素、Canvas）时，浏览器会将其提升到独立的合成层，以避免频繁重绘主层。
 
-值得注意的是：如果底层的某个盒子元素被强制提升为合成层（如设置 will-change: transform），那么其上方所有需要与之叠加的元素也会被提升，并最终被合并到同一个新合成层中。
+## 3. When Is a New Compositing Layer Forced?
 
-换句话说，合成层不是无限叠加的，浏览器会在保证视觉正确的前提下合并层级，避免`层爆炸`。
+When an element is styled with GPU-accelerated properties (e.g., transform, will-change, \<video\>, \<canvas\>), the browser promotes it to a separate compositing layer to avoid redrawing the main layer frequently.
 
-### 4. 实践建议
+Importantly: If a lower element is promoted to a compositing layer (e.g., using will-change: transform), then any higher elements that need to visually overlay it may also be promoted, and eventually merged into a new shared compositing layer.
 
-- 尽量避免滥用 will-change 或 transform 提升合成层，否则可能适得其反，引起多个元素层级被打包进同一层，导致内存占用上升。
+In short: compositing layers do not stack infinitely. The browser merges them intelligently to maintain correct visuals and prevent `layer explosion`.
 
-- 使用浏览器开发者工具（如 Chrome 的 Layers 面板）查看渲染层结构，有助于调试和优化性能。
+## 4. Practical Recommendations
 
-### 5. 测试代码
+- Avoid overusing will-change or transform just to promote elements; excessive layering can backfire and bundle unrelated elements into the same layer, increasing memory usage.
+
+- Use browser developer tools (e.g., Chrome's Layers panel) to inspect the layer tree for debugging and performance tuning.
+
+## 5. Test Code
 
 ```html
 <!DOCTYPE html>
@@ -72,7 +74,7 @@ _一个新的层叠上下文将阻止其内部的子元素参与外层的 z-inde
         left: 100px;
         top: 100px;
 
-        /* 单独提升至合成层 */
+        /* Promote to a separate compositing layer */
         /* transform: translateZ(0); */
       }
       .box2 {
@@ -101,7 +103,7 @@ _一个新的层叠上下文将阻止其内部的子元素参与外层的 z-inde
 </html>
 ```
 
-> 参考文章
+> References:
 >
 > [彻底搞懂CSS层叠上下文、层叠等级、层叠顺序、z-index](https://juejin.cn/post/6844903667175260174)
 >

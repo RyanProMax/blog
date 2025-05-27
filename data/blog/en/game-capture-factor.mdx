@@ -1,48 +1,50 @@
 ---
-title: 游戏采集与 Windows 系统设置的相关性
+title: Correlation Between Game Capture and Windows System Settings
 date: '2025-04-30'
 tags: ['Game Capture', 'Live Stream']
 draft: false
-summary: 开启「硬件加速 GPU 计划」，会导致直播内容卡顿掉帧？
+summary: Does enabling `Hardware-Accelerated GPU Scheduling` (HAGS) cause lag or dropped frames in live streams?
 language: en
 ---
 
 <TOCInline toc={props.toc} asDisclosure />
 
-先上结论：
+TL;DR
 
-- **硬件加速 GPU 计划**：相关性`高`，若 GPU 性能充足可开启，但若出现推流卡顿应关闭。
+- **Hardware-Accelerated GPU Scheduling** (HAGS): `Highly` relevant. Can be enabled if the GPU has sufficient performance, but should be disabled if streaming stutters or drops frames.
 
-- **可变刷新率**：相关性`极低`，可随喜好开启以优化画面流畅度，基本不影响直播。
+- **Variable Refresh Rate** (VRR): `Minimal` relevance. Can be turned on to enhance visual smoothness with little to no impact on streaming.
 
-- **窗口化游戏优化**：相关性`极低`，全屏或 DX12 游戏**无需开启**，仅需 DX10/11 窗口/无边框模式下开启。
+- **Optimizations for Windowed Games**: `Minimal` relevance. **Not needed** for fullscreen or DX12 games; only relevant for DirectX 10/11 games running in windowed or borderless modes.
 
-### 1. [硬件加速 GPU 计划 (HAGS)](https://devblogs.microsoft.com/directx/hardware-accelerated-gpu-scheduling/)
+### 1. [Hardware-Accelerated GPU Scheduling (HAGS)](https://devblogs.microsoft.com/directx/hardware-accelerated-gpu-scheduling/)
 
 > [Safe To Re-enable HAGS?](https://obsproject.com/forum/threads/safe-to-re-enable-hags-hardware-accelerated-gpu-scheduling.162780/)
 
-**原理**：允许 GPU 自主管理内存与任务调度，可减轻 CPU 调度负担，减少 CPU–GPU 同步开销，但可能与其他 GPU 任务竞争资源。
+**Mechanism**: HAGS allows the GPU to manage its own memory and task scheduling independently, reducing CPU overhead and CPU–GPU synchronization costs. However, it may also lead to resource contention with other GPU workloads.
 
-**优点**：对高帧率或多任务场景有轻微性能提升。
+**Pros**: Slight performance gains in high-frame-rate or multitasking scenarios.
 
-**缺点**：将部分调度逻辑移至 GPU，可能与直播推流等并发任务抢占 GPU 资源，偶现帧率波动或卡顿。
+**Cons**: Offloading scheduling logic to the GPU can lead to contention with concurrent GPU tasks such as live stream encoding, occasionally causing frame drops or stutters.
 
-### 2. 可变刷新率 (VRR)
+### 2. Variable Refresh Rate (VRR)
 
 > [win11可变刷新频率和g-sync有什么区别？](https://answers.microsoft.com/zh-hans/windows/forum/all/win11%E5%9B%BE%E5%BD%A2%E8%AE%BE%E7%BD%AE%E9%87%8C/74033735-bab1-4ce2-ba53-adf8ea0617f3)
 >
-> [DRR (Dynamic Refresh Rate)](https://support.microsoft.com/zh-cn/windows/%E5%9C%A8-windows-%E4%B8%AD%E6%9B%B4%E6%94%B9%E6%98%BE%E7%A4%BA%E5%99%A8%E4%B8%8A%E7%9A%84%E5%88%B7%E6%96%B0%E9%A2%91%E7%8E%87-c8ea729e-0678-015c-c415-f806f04aae5a) 是 Windows 11 新增功能，根据操作场景（滚动、书写等）动态切换高低刷新率，目标是`降低功耗`，与捕获性能无直接冲突。
+> [DRR (Dynamic Refresh Rate)](https://support.microsoft.com/zh-cn/windows/%E5%9C%A8-windows-%E4%B8%AD%E6%9B%B4%E6%94%B9%E6%98%BE%E7%A4%BA%E5%99%A8%E4%B8%8A%E7%9A%84%E5%88%B7%E6%96%B0%E9%A2%91%E7%8E%87-c8ea729e-0678-015c-c415-f806f04aae5a): a Windows 11 feature that dynamically switches between high and low refresh rates depending on the scenario (e.g., scrolling, inking), designed to `reduce power consumption`, with no direct conflict with capture performance.
 
-**原理**：显示器刷新率实时与 GPU 输出帧率同步，消除撕裂和卡顿，从而实现更流畅的游戏体验。
+**Mechanism**: The monitor’s refresh rate syncs in real time with the GPU’s frame output to eliminate screen tearing and stuttering, resulting in smoother gameplay.
 
-**资源占用**：VRR 本身不进行额外渲染计算，仅调整显示节奏；对直播编码负载无直接增加。
+**Resource Usage**: VRR does not perform extra rendering or computation—only synchronizes frame display timing. It has no direct impact on live encoding workload.
 
-**缺点**：如果游戏帧率持续过低，LFC（低帧率补偿）插帧可能增加编码压力，间接影响直播稳定性。
+**Cons**: If in-game frame rates remain very low, LFC (Low Framerate Compensation) may trigger frame interpolation, which can slightly increase encoding load and indirectly affect stream stability.
 
-### 3. [窗口化游戏优化](https://support.microsoft.com/zh-cn/windows/windows-11-%E4%B8%AD%E7%AA%97%E5%8F%A3%E5%8C%96%E6%B8%B8%E6%88%8F%E7%9A%84%E4%BC%98%E5%8C%96-3f006843-2c7e-4ed0-9a5e-f9389e535952)
+### 3. [Optimizations for Windowed Games](https://support.microsoft.com/en-us/windows/windows-11-%E4%B8%AD%E7%AA%97%E5%8F%A3%E5%8C%96%E6%B8%B8%E6%88%8F%E7%9A%84%E4%BC%98%E5%8C%96-3f006843-2c7e-4ed0-9a5e-f9389e535952)
 
-**原理**：将传统的 Blt‑model（显存复制）替换为 Flip‑model（缓冲区指针翻转），跳过显存搬运，减少约 30% 输入延迟；支持 Auto HDR 与 VRR。可以理解为是微软针对 DX10/11 窗口/无边框模式的修补性功能，通过强制使用 Flip-model 弥补旧API的缺陷。
+**Mechanism**: Replaces the legacy Blt-model (which involves video memory copying) with the Flip-model (which flips buffer pointers), bypassing VRAM transfers and reducing input latency by approximately 30%. Also enables support for Auto HDR and VRR.
 
-**适用范围**：仅对以窗口或无边框模式运行的 DirectX 10/11 游戏生效；DX12 或独占全屏模式下无效。
+Essentially, this is a Microsoft patch targeting windowed/borderless DirectX 10/11 games to enforce use of the Flip-model and compensate for limitations in older APIs.
 
-**资源占用**：因减少显存带宽消耗，对 GPU 利用率略有优化，但对捕获性能提升有限。
+**Scope**: Only applies to DirectX 10/11 games running in windowed or borderless mode. Has no effect on DX12 games or exclusive fullscreen mode.
+
+**Resource Usage**: By reducing VRAM bandwidth usage, it slightly optimizes GPU utilization, but offers limited improvement to capture performance.
