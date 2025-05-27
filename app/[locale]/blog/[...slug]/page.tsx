@@ -75,7 +75,10 @@ export async function generateMetadata(props: {
 }
 
 export const generateStaticParams = async () => {
-  return allBlogs.map((p) => ({ slug: p.slug.split('/').map((name) => decodeURI(name)) }));
+  return allBlogs.map((p) => ({
+    language: p.language || DEFAULT_LOCALE,
+    slug: p.slug.split('/').map((name) => decodeURI(name)),
+  }));
 };
 
 export default async function Page(props: { params: Promise<{ slug: string[]; locale: string }> }) {
@@ -83,7 +86,9 @@ export default async function Page(props: { params: Promise<{ slug: string[]; lo
   const slug = decodeURI(_slug.join('/'));
   // Filter out drafts in production
   const sortedCoreContents = allCoreContent(sortPosts(allBlogs));
-  const postIndex = sortedCoreContents.findIndex((p) => p.slug === slug);
+  const postIndex = sortedCoreContents.findIndex(
+    (p) => p.slug === slug && (p.language || DEFAULT_LOCALE) === locale
+  );
   if (postIndex === -1) {
     return notFound();
   }

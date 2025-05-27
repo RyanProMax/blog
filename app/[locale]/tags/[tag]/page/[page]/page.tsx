@@ -4,26 +4,34 @@ import ListLayout from '@/layouts/ListLayoutWithTags';
 import { allBlogs } from 'contentlayer/generated';
 import tagData from 'app/tag-data.json';
 import { notFound } from 'next/navigation';
+import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const POSTS_PER_PAGE = 5;
 
 export const generateStaticParams = async () => {
-  const tagCounts = tagData as Record<string, number>;
-  return Object.keys(tagCounts).flatMap((tag) => {
-    const postCount = tagCounts[tag];
-    const totalPages = Math.max(1, Math.ceil(postCount / POSTS_PER_PAGE));
-    return Array.from({ length: totalPages }, (_, i) => ({
-      tag: encodeURI(tag),
-      page: (i + 1).toString(),
-    }));
-  });
+  const data = tagData as Record<Locale, Record<string, number>>;
+  return Object.keys(data).flatMap((language) =>
+    Object.keys(data[language]).map((tag) => {
+      const postCount = data[language][tag];
+      const totalPages = Math.max(1, Math.ceil(postCount / POSTS_PER_PAGE));
+      return Array.from({ length: totalPages }, (_, i) => ({
+        language,
+        tag: encodeURI(tag),
+        page: (i + 1).toString(),
+      }));
+    })
+  );
 };
 
-export default async function TagPage(props: { params: Promise<{ tag: string; page: string }> }) {
-  const params = await props.params;
-  const tag = decodeURI(params.tag);
+export default async function TagPage({
+  params,
+}: {
+  params: Promise<{ tag: string; page: string; locale: Locale }>;
+}) {
+  const { tag: _tag, page, locale = DEFAULT_LOCALE } = await params;
+  const tag = decodeURI(_tag);
   const title = tag[0].toUpperCase() + tag.split(' ').join('-').slice(1);
-  const pageNumber = parseInt(params.page);
+  const pageNumber = parseInt(page);
   const filteredPosts = allCoreContent(
     sortPosts(allBlogs.filter((post) => post.tags && post.tags.map((t) => slug(t)).includes(tag)))
   );
@@ -48,6 +56,7 @@ export default async function TagPage(props: { params: Promise<{ tag: string; pa
       initialDisplayPosts={initialDisplayPosts}
       pagination={pagination}
       title={title}
+      locale={locale}
     />
   );
 }

@@ -10,7 +10,7 @@ export const metadata = genPageMetadata({ title: 'Tags', description: 'Things I 
 
 export default async function Page({ params }: { params: Promise<{ locale: Locale }> }) {
   const { locale = DEFAULT_LOCALE } = await params;
-  const tagCounts = tagData as Record<string, number>;
+  const tagCounts = (tagData as Record<Locale, Record<string, number>>)[locale];
   const tagKeys = Object.keys(tagCounts);
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a]);
   const title = getNavLinkData(locale, '/tags')?.title || 'Tags';

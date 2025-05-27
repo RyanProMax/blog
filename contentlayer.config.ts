@@ -25,6 +25,7 @@ import rehypePresetMinify from 'rehype-preset-minify';
 import siteMetadata from './data/siteMetadata';
 import { allCoreContent, sortPosts } from 'pliny/utils/contentlayer.js';
 import prettier from 'prettier';
+import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const root = process.cwd();
 const isProduction = process.env.NODE_ENV === 'production';
@@ -46,7 +47,11 @@ const computedFields: ComputedFields = {
   readingTime: { type: 'json', resolve: (doc) => readingTime(doc.body.raw) },
   slug: {
     type: 'string',
-    resolve: (doc) => doc._raw.flattenedPath.replace(/^.+?(\/)/, ''),
+    resolve: (doc) => {
+      // return doc._raw.flattenedPath.replace(/^.+?(\/)/, '');
+      // remove blog/en(zh)/ prefix: blog/en/article -> article
+      return doc._raw.flattenedPath.replace(/^.+?\/(zh|en)(\/)/, '');
+    },
   },
   path: {
     type: 'string',
@@ -63,20 +68,22 @@ const computedFields: ComputedFields = {
  * Count the occurrences of all tags across blog posts and write to json file
  */
 async function createTagCount(allBlogs) {
-  const tagCount: Record<string, number> = {};
+  const tagCountByLang: Record<Locale, Record<string, number>> = {
+    [Locale.EN]: {},
+    [Locale.ZH]: {},
+  };
   allBlogs.forEach((file) => {
     if (file.tags && (!isProduction || file.draft !== true)) {
+      const locale = file.language || DEFAULT_LOCALE;
       file.tags.forEach((tag) => {
-        const formattedTag = slug(tag);
-        if (formattedTag in tagCount) {
-          tagCount[formattedTag] += 1;
-        } else {
-          tagCount[formattedTag] = 1;
-        }
+        const tagKey = slug(tag);
+        tagCountByLang[locale][tagKey] = (tagCountByLang[locale][tagKey] || 0) + 1;
       });
     }
   });
-  const formatted = await prettier.format(JSON.stringify(tagCount, null, 2), { parser: 'json' });
+  const formatted = await prettier.format(JSON.stringify(tagCountByLang, null, 2), {
+    parser: 'json',
+  });
   writeFileSync('./app/tag-data.json', formatted);
 }
 
@@ -100,6 +107,7 @@ export const Blog = defineDocumentType(() => ({
   fields: {
     title: { type: 'string', required: true },
     date: { type: 'date', required: true },
+    language: { type: 'string', required: true },
     tags: { type: 'list', of: { type: 'string' }, default: [] },
     lastmod: { type: 'date' },
     draft: { type: 'boolean' },

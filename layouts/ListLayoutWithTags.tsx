@@ -9,6 +9,7 @@ import Link from '@/components/Link';
 import Tag from '@/components/Tag';
 import siteMetadata from '@/data/siteMetadata';
 import tagData from 'app/tag-data.json';
+import { Locale } from '@/locales/config';
 
 interface PaginationProps {
   totalPages: number;
@@ -19,6 +20,7 @@ interface ListLayoutProps {
   title: string;
   initialDisplayPosts?: CoreContent<Blog>[];
   pagination?: PaginationProps;
+  locale: Locale;
 }
 
 function Pagination({ totalPages, currentPage }: PaginationProps) {
@@ -71,9 +73,10 @@ export default function ListLayoutWithTags({
   title,
   initialDisplayPosts = [],
   pagination,
+  locale,
 }: ListLayoutProps) {
   const pathname = usePathname();
-  const tagCounts = tagData as Record<string, number>;
+  const tagCounts = (tagData as Record<Locale, Record<string, number>>)[locale];
   const tagKeys = Object.keys(tagCounts);
   const sortedTags = tagKeys.sort((a, b) => tagCounts[b] - tagCounts[a]);
 
@@ -91,13 +94,15 @@ export default function ListLayoutWithTags({
           <div className="hidden h-full max-h-screen max-w-[280px] min-w-[280px] flex-wrap overflow-auto rounded-sm bg-gray-50 pt-5 shadow-md sm:flex dark:bg-gray-900/70 dark:shadow-gray-800/40">
             <div className="px-6 py-4">
               {pathname.startsWith('/blog') ? (
-                <h3 className="text-primary-500 font-bold uppercase">All Posts</h3>
+                <h3 className="text-primary-500 font-bold uppercase">
+                  {locale === Locale.ZH ? '全部文章' : 'All Posts'}
+                </h3>
               ) : (
                 <Link
                   href={`/blog`}
                   className="hover:text-primary-500 dark:hover:text-primary-500 font-bold text-gray-700 uppercase dark:text-gray-300"
                 >
-                  All Posts
+                  {locale === Locale.ZH ? '全部文章' : 'All Posts'}
                 </Link>
               )}
               <ul>
@@ -126,7 +131,8 @@ export default function ListLayoutWithTags({
           <div>
             <ul>
               {displayPosts.map((post) => {
-                const { path, date, title, summary, tags } = post;
+                const { path: _path, date, title, summary, tags } = post;
+                const path = _path.replace(/\/(zh|en)(?=\/)/, '');
                 return (
                   <li key={path} className="py-5">
                     <article className="flex flex-col space-y-2 xl:space-y-0">
