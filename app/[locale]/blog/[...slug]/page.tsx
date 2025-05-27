@@ -22,7 +22,7 @@ const layouts = {
   PostBanner,
 };
 
-export const findPost = (post: Blog, slug: string, locale: Locale) =>
+const findPost = (post: Blog, slug: string, locale: Locale) =>
   post.slug === slug && (post.language || DEFAULT_LOCALE) === locale;
 
 export async function generateMetadata({
