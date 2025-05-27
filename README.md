@@ -43,4 +43,4 @@ See [Next.js on Netlify](https://docs.netlify.com/integrations/frameworks/next-j
 ## Features
 
 - [ ] Analytics: Umami Cloud
-- [ ] i18n: en-US & zh-CN
+- [X] i18n: en-US & zh-CN
