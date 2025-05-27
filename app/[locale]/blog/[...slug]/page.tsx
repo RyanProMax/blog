@@ -13,7 +13,7 @@ import PostBanner from '@/layouts/PostBanner';
 import { Metadata } from 'next';
 import siteMetadata from '@/data/siteMetadata';
 import { notFound } from 'next/navigation';
-import { DEFAULT_LOCALE } from '@/locales/config';
+import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const defaultLayout = 'PostLayout';
 const layouts = {
@@ -22,15 +22,22 @@ const layouts = {
   PostBanner,
 };
 
-export async function generateMetadata(props: {
-  params: Promise<{ slug: string[] }>;
+export const findPost = (post: Blog, slug: string, locale: Locale) =>
+  post.slug === slug && (post.language || DEFAULT_LOCALE) === locale;
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ slug: string[]; locale: Locale }>;
 }): Promise<Metadata | undefined> {
-  const params = await props.params;
-  const slug = decodeURI(params.slug.join('/'));
-  const post = allBlogs.find((p) => p.slug === slug);
+  const { slug: _slug, locale = DEFAULT_LOCALE } = await params;
+  const slug = decodeURI(_slug.join('/'));
+  const post = allBlogs.find((p) => findPost(p, slug, locale));
   const authorList = post?.authors || ['default'];
   const authorDetails = authorList.map((author) => {
-    const authorResults = allAuthors.find((p) => p.slug === author);
+    const authorResults = allAuthors.find(
+      (p) => p.slug.includes(author) && (p.locale || DEFAULT_LOCALE) === locale
+    );
     return coreContent(authorResults as Authors);
   });
   if (!post) {
@@ -85,9 +92,11 @@ export default async function Page(props: { params: Promise<{ slug: string[]; lo
   const { slug: _slug, locale = DEFAULT_LOCALE } = await props.params;
   const slug = decodeURI(_slug.join('/'));
   // Filter out drafts in production
-  const sortedCoreContents = allCoreContent(sortPosts(allBlogs));
-  const postIndex = sortedCoreContents.findIndex(
-    (p) => p.slug === slug && (p.language || DEFAULT_LOCALE) === locale
+  const sortedCoreContents = allCoreContent(sortPosts(allBlogs)).filter(
+    (p) => (p.language || DEFAULT_LOCALE) === locale
+  );
+  const postIndex = sortedCoreContents.findIndex((p) =>
+    findPost(p as Blog, slug, locale as Locale)
   );
   if (postIndex === -1) {
     return notFound();
@@ -95,11 +104,11 @@ export default async function Page(props: { params: Promise<{ slug: string[]; lo
 
   const prev = sortedCoreContents[postIndex + 1];
   const next = sortedCoreContents[postIndex - 1];
-  const post = allBlogs.find((p) => p.slug === slug) as Blog;
+  const post = allBlogs.find((p) => findPost(p, slug, locale as Locale)) as Blog;
   const authorList = post?.authors || [locale !== DEFAULT_LOCALE ? `default.${locale}` : 'default'];
   const authorDetails = authorList.map((author) => {
     const authorResults = allAuthors.find(
-      (p) => p.slug === author && p.locale === (locale || DEFAULT_LOCALE)
+      (p) => p.slug.includes(author) && (p.locale || DEFAULT_LOCALE) === locale
     );
     return coreContent(authorResults as Authors);
   });

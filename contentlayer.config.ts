@@ -55,7 +55,10 @@ const computedFields: ComputedFields = {
   },
   path: {
     type: 'string',
-    resolve: (doc) => doc._raw.flattenedPath,
+    resolve: (doc) => {
+      // return doc._raw.flattenedPath;
+      return doc._raw.flattenedPath.replace(/\/(zh|en)(?=\/)/, '');
+    },
   },
   filePath: {
     type: 'string',

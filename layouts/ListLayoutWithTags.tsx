@@ -131,8 +131,7 @@ export default function ListLayoutWithTags({
           <div>
             <ul>
               {displayPosts.map((post) => {
-                const { path: _path, date, title, summary, tags } = post;
-                const path = _path.replace(/\/(zh|en)(?=\/)/, '');
+                const { path, date, title, summary, tags } = post;
                 return (
                   <li key={path} className="py-5">
                     <article className="flex flex-col space-y-2 xl:space-y-0">
