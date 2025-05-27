@@ -79,7 +79,7 @@ export const generateStaticParams = async () => {
 };
 
 export default async function Page(props: { params: Promise<{ slug: string[]; locale: string }> }) {
-  const { slug: _slug, locale } = await props.params;
+  const { slug: _slug, locale = DEFAULT_LOCALE } = await props.params;
   const slug = decodeURI(_slug.join('/'));
   // Filter out drafts in production
   const sortedCoreContents = allCoreContent(sortPosts(allBlogs));

@@ -39,7 +39,8 @@ export const EXPERIENCES: Record<Locale, Experience[]> = {
         return (
           <ul className="[&>li]:my-2 [&>li]:pl-0">
             <li>
-              Responsible for developing and iterating core live-stream features such as{' '}
+              <strong>Lead Core Feature Development and Iteration</strong>: Responsible for the
+              design and optimization of key modules such as{' '}
               <a
                 href="https://developer.open-douyin.com/docs/resource/zh-CN/interaction/introduction/live-play/1"
                 rel="noopener noreferrer"
@@ -53,9 +54,9 @@ export const EXPERIENCES: Record<Locale, Experience[]> = {
                 rel="noopener noreferrer"
                 target="_blank"
               >
-                Dual-Screen broadcasting
+                Bullet‐screen Gameplay
               </a>{' '}
-              and{' '}
+              ,{' '}
               <a
                 href="https://streamingtool.douyin.com/docs/guide/72891"
                 rel="noopener noreferrer"
@@ -63,11 +64,27 @@ export const EXPERIENCES: Record<Locale, Experience[]> = {
               >
                 Game-linking
               </a>{' '}
-              .
+              to enhance user experience.
             </li>
             <li>
-              Optimized <strong>PC game capture</strong> and{' '}
-              <strong>mobile-to-screen casting</strong>, enhancing performance and stability.
+              <strong>Establish Stability Metrics Framework</strong>: Develop and refine key
+              performance indicators for{' '}
+              <a
+                href="https://streamingtool.douyin.com/docs/guide/game"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                PC game capture
+              </a>{' '}
+              and{' '}
+              <a
+                href="https://streamingtool.douyin.com/docs/guide/mirror"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                mobile-screen casting
+              </a>{' '}
+              functionalities to ensure high system availability.
             </li>
           </ul>
         );
@@ -110,7 +127,7 @@ export const EXPERIENCES: Record<Locale, Experience[]> = {
         return (
           <ul className="[&>li]:my-2 [&>li]:pl-0">
             <li>
-              负责游戏开播核心功能的开发与迭代，包括{' '}
+              <strong>主导核心功能开发与迭代</strong>：负责{' '}
               <a
                 href="https://developer.open-douyin.com/docs/resource/zh-CN/interaction/introduction/live-play/1"
                 rel="noopener noreferrer"
@@ -126,7 +143,7 @@ export const EXPERIENCES: Record<Locale, Experience[]> = {
               >
                 双屏直播
               </a>{' '}
-              及{' '}
+              、{' '}
               <a
                 href="https://streamingtool.douyin.com/docs/guide/72891"
                 rel="noopener noreferrer"
@@ -134,11 +151,27 @@ export const EXPERIENCES: Record<Locale, Experience[]> = {
               >
                 游戏连屏
               </a>{' '}
-              等。
+              等关键模块的设计与优化，提升用户体验。
             </li>
             <li>
-              负责 <strong>PC 游戏采集</strong> 和 <strong>手机投屏</strong>{' '}
-              等功能优化，及稳定性指标建设。
+              <strong>稳定性指标体系构建</strong>
+              ：建立并完善{' '}
+              <a
+                href="https://streamingtool.douyin.com/docs/guide/game"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                PC 游戏采集
+              </a>{' '}
+              与{' '}
+              <a
+                href="https://streamingtool.douyin.com/docs/guide/mirror"
+                rel="noopener noreferrer"
+                target="_blank"
+              >
+                手机投屏
+              </a>{' '}
+              等功能的关键性能指标，确保系统高可用性。
             </li>
           </ul>
         );
