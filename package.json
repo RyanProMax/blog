@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "next dev",
-    "dev": "cross-env INIT_CWD=$PWD next dev",
-    "build": "cross-env INIT_CWD=$PWD next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
-    "build:prod": "cross-env INIT_CWD=$PWD EXPORT=1 UNOPTIMIZED=1 next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
+    "dev": "cross-env INIT_CWD=. next dev",
+    "build": "cross-env INIT_CWD=. next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
+    "build:prod": "cross-env INIT_CWD=. EXPORT=1 UNOPTIMIZED=1 next build && cross-env NODE_OPTIONS='--experimental-json-modules' node ./scripts/postbuild.mjs",
     "serve": "next start",
     "analyze": "cross-env ANALYZE=true next build",
     "lint": "next lint --fix --dir pages --dir app --dir components --dir lib --dir layouts --dir scripts",
@@ -79,3 +79,4 @@
   },
   "packageManager": "yarn@3.6.1"
 }
+
