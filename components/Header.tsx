@@ -23,6 +23,7 @@ const Header = () => {
   const { locale = DEFAULT_LOCALE } = useParams();
   useLocalizedRouter();
   const currentNavLinks = headerNavLinks[locale as Locale] || headerNavLinks[DEFAULT_LOCALE];
+  const basePath = process.env.BASE_PATH || '';
 
   return (
     <header className={headerClass}>
@@ -30,7 +31,7 @@ const Header = () => {
         <div className="flex items-center justify-between">
           <div className="mr-3">
             <Image
-              src="/static/favicons/android-chrome-192x192.png"
+              src={`${basePath}/static/favicons/android-chrome-192x192.png`}
               alt="Logo"
               width={50}
               height={50}
