@@ -56,8 +56,16 @@ const computedFields: ComputedFields = {
   path: {
     type: 'string',
     resolve: (doc) => {
-      // return doc._raw.flattenedPath;
-      return doc._raw.flattenedPath.replace(/\/(zh|en)(?=\/)/, '');
+      // 保持完整路径，包含语言前缀: blog/en/article -> en/blog/article
+      const fullPath = doc._raw.flattenedPath;
+      // 提取语言和文章路径: blog/en/article -> en/blog/article
+      const match = fullPath.match(/^blog\/(zh|en)\/(.+)$/);
+      if (match) {
+        const [, language, articleSlug] = match;
+        return `${language}/blog/${articleSlug}`;
+      }
+      // 如果没有匹配到，返回原路径去掉 blog/ 前缀
+      return fullPath.replace(/^blog\//, '');
     },
   },
   filePath: {
