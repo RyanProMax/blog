@@ -18,9 +18,9 @@ const outputFolder = process.env.EXPORT ? 'out' : 'public';
 
 const generateRssItem = (config, post) => `
   <item>
-    <guid>${config.siteUrl}/blog/${post.slug}</guid>
+    <guid>${config.siteUrl}/${post.language || DEFAULT_LOCALE}/blog/${post.slug}</guid>
     <title>${escape(post.title)}</title>
-    <link>${config.siteUrl}/blog/${post.slug}</link>
+    <link>${config.siteUrl}/${post.language || DEFAULT_LOCALE}/blog/${post.slug}</link>
     ${post.summary && `<description>${escape(post.summary)}</description>`}
     <pubDate>${new Date(post.date).toUTCString()}</pubDate>
     <author>${config.email} (${config.author})</author>
@@ -28,17 +28,17 @@ const generateRssItem = (config, post) => `
   </item>
 `;
 
-const generateRss = (config, posts, page = 'feed.xml') => `
+const generateRss = (config, posts, language = DEFAULT_LOCALE, page = 'feed.xml') => `
   <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
     <channel>
       <title>${escape(config.title)}</title>
-      <link>${config.siteUrl}/blog</link>
+      <link>${config.siteUrl}/${language}/blog</link>
       <description>${escape(config.description)}</description>
       <language>${config.language}</language>
       <managingEditor>${config.email} (${config.author})</managingEditor>
       <webMaster>${config.email} (${config.author})</webMaster>
       <lastBuildDate>${new Date(posts[0].date).toUTCString()}</lastBuildDate>
-      <atom:link href="${config.siteUrl}/${page}" rel="self" type="application/rss+xml"/>
+      <atom:link href="${config.siteUrl}/${language}/${page}" rel="self" type="application/rss+xml"/>
       ${posts.map((post) => generateRssItem(config, post)).join('')}
     </channel>
   </rss>
@@ -50,7 +50,7 @@ async function generateRSS(config, allBlogs, language = DEFAULT_LOCALE, page = '
   );
   // RSS for blog post
   if (publishPosts.length > 0) {
-    const rss = generateRss(config, sortPosts(publishPosts));
+    const rss = generateRss(config, sortPosts(publishPosts), language);
     const rssPath = `./${outputFolder}/${language}`;
     mkdirSync(rssPath, { recursive: true });
     writeFileSync(path.join(rssPath, page), rss);
@@ -59,7 +59,7 @@ async function generateRSS(config, allBlogs, language = DEFAULT_LOCALE, page = '
   if (publishPosts.length > 0) {
     for (const tag of Object.keys(tagData[language])) {
       const filteredPosts = allBlogs.filter((post) => post.tags.map((t) => slug(t)).includes(tag));
-      const rss = generateRss(config, filteredPosts, `tags/${tag}/${page}`);
+      const rss = generateRss(config, filteredPosts, language, `tags/${tag}/${page}`);
       const rssPath = path.join(outputFolder, language, 'tags', tag);
       mkdirSync(rssPath, { recursive: true });
       writeFileSync(path.join(rssPath, page), rss);

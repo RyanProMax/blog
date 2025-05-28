@@ -6,7 +6,7 @@ const siteMetadata = {
   description: 'Welcome to my blog - here I share everything that I love.',
   language: 'en-US',
   theme: 'system', // system, dark or light
-  siteUrl: 'https://tailwind-nextjs-starter-blog.vercel.app',
+  siteUrl: 'https://ryanpromax.github.io/blog',
   siteRepo: 'https://github.com/RyanProMax/blog/',
   siteLogo: `${process.env.BASE_PATH || ''}/static/images/logo.png`,
   socialBanner: `${process.env.BASE_PATH || ''}/static/images/twitter-card.png`,
