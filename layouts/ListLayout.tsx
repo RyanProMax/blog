@@ -8,6 +8,7 @@ import type { Blog } from 'contentlayer/generated';
 import Link from '@/components/Link';
 import Tag from '@/components/Tag';
 import siteMetadata from '@/data/siteMetadata';
+import { DEFAULT_LOCALE } from '@/locales/config';
 
 interface PaginationProps {
   totalPages: number;
@@ -136,7 +137,7 @@ export default function ListLayout({
                         </Link>
                       </h3>
                       <div className="flex flex-wrap">
-                        {tags?.map((tag) => <Tag key={tag} text={tag} />)}
+                        {tags?.map((tag) => <Tag key={tag} text={tag} locale={DEFAULT_LOCALE} />)}
                       </div>
                     </div>
                     <div className="prose max-w-none text-gray-500 dark:text-gray-400">

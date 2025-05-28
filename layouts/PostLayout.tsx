@@ -9,6 +9,7 @@ import Image from '@/components/Image';
 import Tag from '@/components/Tag';
 import siteMetadata from '@/data/siteMetadata';
 import ScrollTopAndComment from '@/components/ScrollTopAndComment';
+import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const editUrl = (path) => `${siteMetadata.siteRepo}/blob/main/data/${path}`;
 const discussUrl = (path) =>
@@ -32,6 +33,7 @@ interface LayoutProps {
 export default function PostLayout({ content, authorDetails, next, prev, children }: LayoutProps) {
   const { filePath, path, slug, date, title, tags } = content;
   const basePath = path.split('/')[0];
+  const locale = (basePath as Locale) || DEFAULT_LOCALE;
 
   return (
     <SectionContainer>
@@ -120,7 +122,7 @@ export default function PostLayout({ content, authorDetails, next, prev, childre
                     </h2>
                     <div className="flex flex-wrap">
                       {tags.map((tag) => (
-                        <Tag key={tag} text={tag} />
+                        <Tag key={tag} text={tag} locale={locale} />
                       ))}
                     </div>
                   </div>
