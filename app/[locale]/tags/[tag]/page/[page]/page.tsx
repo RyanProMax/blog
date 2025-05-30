@@ -10,12 +10,12 @@ const POSTS_PER_PAGE = 5;
 
 export const generateStaticParams = async () => {
   const data = tagData as Record<Locale, Record<string, number>>;
-  return Object.keys(data).flatMap((language) =>
-    Object.keys(data[language]).flatMap((tag) => {
-      const postCount = data[language][tag];
+  return Object.keys(data).flatMap((locale) =>
+    Object.keys(data[locale]).flatMap((tag) => {
+      const postCount = data[locale][tag];
       const totalPages = Math.max(1, Math.ceil(postCount / POSTS_PER_PAGE));
       return Array.from({ length: totalPages }, (_, i) => ({
-        language,
+        locale,
         tag: encodeURI(tag),
         page: (i + 1).toString(),
       }));

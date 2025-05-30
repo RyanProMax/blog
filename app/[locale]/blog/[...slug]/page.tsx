@@ -83,7 +83,7 @@ export async function generateMetadata({
 
 export const generateStaticParams = async () => {
   return allBlogs.map((p) => ({
-    language: p.language || DEFAULT_LOCALE,
+    locale: p.language || DEFAULT_LOCALE,
     slug: p.slug.split('/').map((name) => decodeURI(name)),
   }));
 };

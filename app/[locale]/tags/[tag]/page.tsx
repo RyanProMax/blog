@@ -31,9 +31,9 @@ export async function generateMetadata({
 
 export const generateStaticParams = async () => {
   const data = tagData as Record<Locale, Record<string, number>>;
-  return Object.keys(data).flatMap((language) =>
-    Object.keys(data[language]).map((tag) => ({
-      language,
+  return Object.keys(data).flatMap((locale) =>
+    Object.keys(data[locale]).map((tag) => ({
+      locale,
       tag: encodeURI(tag),
     }))
   );
