@@ -1,5 +1,5 @@
 <h1 align='center'>
-  <a href="https://ryanpromax.github.io/blog/">Ryan's Blog</a>
+  <a href="https://ryanpromax.github.io">Ryan's Blog</a>
 </h1>
 
 <p align="center"><i>This website refers to <a href="https://github.com/timlrx/tailwind-nextjs-starter-blog">tailwind-nextjs-starter-blog</a>.</i></p>

@@ -1,15 +1,15 @@
 {
   "en": {
     "game-capture": 2,
-    "live-stream": 3,
     "window-capture": 1,
+    "live-stream": 3,
     "css": 1,
     "electron": 1
   },
   "zh": {
-    "游戏采集": 2,
-    "直播流": 3,
-    "窗口采集": 1,
+    "game-capture": 2,
+    "window-capture": 1,
+    "live-stream": 3,
     "css": 1,
     "electron": 1
   }
