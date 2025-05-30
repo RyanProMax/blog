@@ -1,15 +1,15 @@
 {
   "en": {
     "game-capture": 2,
-    "window-capture": 1,
     "live-stream": 3,
+    "window-capture": 1,
     "css": 1,
     "electron": 1
   },
   "zh": {
     "game-capture": 2,
-    "window-capture": 1,
     "live-stream": 3,
+    "window-capture": 1,
     "css": 1,
     "electron": 1
   }

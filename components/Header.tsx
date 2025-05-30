@@ -11,7 +11,6 @@ import ThemeSwitch from './ThemeSwitch';
 import SearchButton from './SearchButton';
 import LocaleSwitcher from './LocaleSwitcher';
 
-import { useLocalizedRouter } from '@/locales/useLocalizedRouter';
 import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 const Header = () => {
@@ -21,7 +20,6 @@ const Header = () => {
   }
   const pathname = usePathname();
   const { locale = DEFAULT_LOCALE } = useParams();
-  useLocalizedRouter();
   const currentNavLinks = headerNavLinks[locale as Locale] || headerNavLinks[DEFAULT_LOCALE];
   const basePath = process.env.BASE_PATH || '';
 

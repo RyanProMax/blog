@@ -1,18 +1,20 @@
 'use client';
 
 import clsx from 'clsx';
-import { useParams, usePathname } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@headlessui/react';
 import { DEFAULT_LOCALE, Locale } from '@/locales/config';
 
 export default function LocaleSwitcher() {
   const { locale = DEFAULT_LOCALE } = useParams();
-  const pathname = usePathname();
   const nextLocale = locale === Locale.EN ? Locale.ZH : Locale.EN;
 
+  // 使用查询参数进行语言切换，让middleware处理
+  const switchUrl = `?locale=${nextLocale}`;
+
   return (
-    <Link href={pathname.replace(`/${locale}`, `/${nextLocale}`)} className={clsx('select-none')}>
+    <Link href={switchUrl} className={clsx('select-none')}>
       <Button
         className={clsx(
           'inline-flex items-center px-1.5 py-0.5',
