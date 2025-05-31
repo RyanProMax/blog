@@ -13,8 +13,16 @@ export default function LocaleSwitcher() {
   // 使用查询参数进行语言切换，让middleware处理
   const switchUrl = `?locale=${nextLocale}`;
 
+  const handleLanguageSwitch = () => {
+    try {
+      localStorage.setItem('preferred-locale', nextLocale);
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   return (
-    <Link href={switchUrl} className={clsx('select-none')}>
+    <Link href={switchUrl} className={clsx('select-none')} onClick={handleLanguageSwitch}>
       <Button
         className={clsx(
           'inline-flex items-center px-1.5 py-0.5',
