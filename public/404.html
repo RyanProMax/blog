@@ -9,89 +9,71 @@
       const defaultLocale = 'en';
       const pathname = window.location.pathname;
       const search = window.location.search;
-      const urlParams = new URLSearchParams(search);
       
       console.log('GitHub Pages Route Handler:', { pathname, search });
       
-      // 检查路径是否已包含语言前缀
+      // 解析当前路径中的语言信息（参考middleware逻辑）
       const localeRegex = new RegExp(`^/(${supportedLanguages.join('|')})(/.*)?$`);
       const localeMatch = pathname.match(localeRegex);
+      const currentUrlLocale = localeMatch?.[1] || null;
+      const basePath = localeMatch?.[2] || '/';
       
-      let locale = null;
-      let basePath = pathname;
-      
-      if (localeMatch) {
-        locale = localeMatch[1];
-        basePath = localeMatch[2] || '/';
-      }
-      
-      // 确定当前应该使用的语言
-      let currentLocale = defaultLocale;
-      
-      // 1. 优先检查 referer 中的语言（模拟 middleware 的 referer 逻辑）
-      const referer = document.referrer;
-      if (referer) {
-        try {
-          const refererUrl = new URL(referer);
-          const refererMatch = refererUrl.pathname.match(localeRegex);
-          if (refererMatch) {
-            currentLocale = refererMatch[1];
-            console.log('Found locale from referer:', currentLocale);
-          }
-        } catch (e) {
-          console.error('Referer parsing error:', e);
-        }
-      }
-      
-      // 2. 如果没有从 referer 获取到语言，检查其他来源
-      if (currentLocale === defaultLocale) {
-        // 检查 localStorage 中的语言偏好（GitHub Pages 特有）
+      // 获取用户偏好语言（参考middleware的getPreferredLocale）
+      function getPreferredLocale() {
+        // 1. 检查localStorage中的偏好语言
         try {
           const savedLocale = localStorage.getItem('preferred-locale');
           if (savedLocale && supportedLanguages.includes(savedLocale)) {
-            currentLocale = savedLocale;
-            console.log('Found locale from localStorage:', currentLocale);
+            console.log('Found locale from localStorage:', savedLocale);
+            return savedLocale;
           }
         } catch (e) {
           console.error('localStorage error:', e);
         }
         
-        // 检查浏览器语言（模拟 accept-language 头）
-        if (currentLocale === defaultLocale) {
-          const browserLang = navigator.language || navigator.languages?.[0];
-          if (browserLang && browserLang.includes('zh')) {
-            currentLocale = 'zh';
-            console.log('Found locale from browser language:', currentLocale);
-          }
+        // 2. 检查浏览器语言
+        const browserLang = navigator.language || navigator.languages?.[0];
+        if (browserLang && browserLang.includes('zh')) {
+          console.log('Found locale from browser language: zh');
+          return 'zh';
         }
+        
+        // 3. 返回默认语言
+        console.log('Using default locale:', defaultLocale);
+        return defaultLocale;
       }
       
-      // 处理语言切换查询参数（模拟 middleware 的 switchLocale 逻辑）
-      const switchLocale = urlParams.get('locale');
-      if (switchLocale && supportedLanguages.includes(switchLocale)) {
-        urlParams.delete('locale');
-        const newSearch = urlParams.toString();
-        const targetPath = `/${switchLocale}${basePath}${newSearch ? '?' + newSearch : ''}`;
-        console.log('Language switch detected, redirecting to:', targetPath);
-        window.location.replace(targetPath);
-        return;
-      }
+      const preferredLocale = getPreferredLocale();
       
-      // 处理根路径或无语言前缀的情况（模拟 middleware 的主逻辑）
-      if (pathname === '/' || !locale) {
-        const targetPath = `/${currentLocale}${pathname}${search}`;
+      // 情况1：根路径或无语言前缀 -> 重定向到偏好语言
+      if (pathname === '/' || !currentUrlLocale) {
+        const targetPath = `/${preferredLocale}${pathname === '/' ? '' : pathname}${search}`;
         console.log('Adding locale prefix, redirecting to:', targetPath);
         window.location.replace(targetPath);
         return;
       }
       
-      // 有语言前缀但页面不存在的情况
-      // 在 GitHub Pages 中，这通常意味着页面确实不存在
-      // 我们可以尝试去掉可能的子路径，或者重定向到该语言的首页
+      // 情况2：当前语言与偏好语言不匹配 -> 重定向到偏好语言
+      if (currentUrlLocale !== preferredLocale) {
+        const targetPath = `/${preferredLocale}${basePath}${search}`;
+        console.log('Language mismatch, redirecting to:', targetPath);
+        window.location.replace(targetPath);
+        return;
+      }
+      
+      // 情况3：路径末尾有斜杠但不是根路径 -> 去掉斜杠重定向
+      // 特殊处理：/zh/ -> /zh, /en/ -> /en
+      if (pathname.endsWith('/') && pathname !== '/') {
+        const targetPath = pathname.slice(0, -1) + search;
+        console.log('Removing trailing slash, redirecting to:', targetPath);
+        window.location.replace(targetPath);
+        return;
+      }
+      
+      // 情况4：页面确实不存在 -> 重定向到该语言的首页
       if (basePath !== '/') {
-        // 尝试重定向到该语言的首页
-        const targetPath = `/${locale}/${search}`;
-        console.log('Page not found with locale prefix, redirecting to locale home:', targetPath);
+        const targetPath = `/${currentUrlLocale}/${search}`;
+        console.log('Page not found, redirecting to locale home:', targetPath);
         window.location.replace(targetPath);
       }
     })();
