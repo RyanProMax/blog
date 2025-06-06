@@ -39,6 +39,7 @@ jobs:
           EXPORT: 1
           UNOPTIMIZED: 1
           BASE_PATH: ${{ steps.configurepages.outputs.base_path }}
+          NEXT_UMAMI_ID: ${{ secrets.NEXT_UMAMI_ID }}
       # 复制404.html用于SPA路由处理
       - name: Copy 404.html for SPA routing
         run: cp public/404.html out/404.html
